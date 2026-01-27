@@ -101,8 +101,8 @@ export function ParticipantDashboard() {
               title="Data Consistency Ranking"
               rank={dataRanking?.rank ?? null}
               totalParticipants={dataRanking?.total_participants ?? null}
-              subtitle="Total data collected"
-              value={dataRanking ? `${dataRanking.data_volume_mb.toFixed(2)} MB` : undefined}
+              subtitle="Completion rate"
+              value={dataRanking ? `${dataRanking.completion_rate.toFixed(1)}%` : undefined}
               color="primary"
               loading={loadingDataRanking}
             />

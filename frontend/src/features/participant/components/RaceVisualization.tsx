@@ -25,16 +25,12 @@ export function RaceVisualization({
     const currentUser = participants.find((p) => p.participant_id === currentUserId)
     const others = participants.filter((p) => p.participant_id !== currentUserId)
 
-    // Get max volume for normalization
-    const allVolumes = participants.map((p) => p.data_volume_mb)
-    const maxVolume = Math.max(...allVolumes, 1)
-
-    // Normalize values
-    const currentNormalized = currentUser ? currentUser.data_volume_mb / maxVolume : 0
+    // Use completion_rate (0-100) and normalize to 0-1
+    const currentNormalized = currentUser ? currentUser.completion_rate / 100 : 0
 
     // Create y positions for other participants (spread them vertically)
     const otherData = others.map((p, i) => {
-      const normalizedValue = p.data_volume_mb / maxVolume
+      const normalizedValue = p.completion_rate / 100
       const yPosition = ((i - others.length / 2) / (others.length / 2)) * 0.4
       return {
         value: [normalizedValue, yPosition],
@@ -42,7 +38,7 @@ export function RaceVisualization({
       }
     })
 
-    // Choose emoji based on position
+    // Choose emoji based on completion rate
     const emojis = ['😴', '😐', '😊', '😎', '👑']
     let emoji = emojis[0]
     if (currentNormalized >= 1) emoji = emojis[4]
@@ -50,8 +46,8 @@ export function RaceVisualization({
     else if (currentNormalized >= 0.5) emoji = emojis[2]
     else if (currentNormalized >= 0.25) emoji = emojis[1]
 
-    // Calculate rank
-    const rank = others.filter((p) => p.data_volume_mb > (currentUser?.data_volume_mb || 0)).length + 1
+    // Calculate rank based on completion rate
+    const rank = others.filter((p) => p.completion_rate > (currentUser?.completion_rate || 0)).length + 1
 
     return {
       title: {

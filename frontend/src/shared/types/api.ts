@@ -74,6 +74,7 @@ export interface Ranking {
   rank: number
   total_participants: number
   data_volume_mb: number
+  completion_rate: number  // 0-100
 }
 
 export interface GroupRanking {
@@ -81,6 +82,7 @@ export interface GroupRanking {
   username: string
   rank: number
   data_volume_mb: number
+  completion_rate: number  // 0-100
 }
 
 export interface QuestionnaireRanking {

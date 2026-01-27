@@ -1,7 +1,6 @@
 import { Card } from '@/shared/components/ui/Card'
 import { MultiLineChart } from '@/shared/components/charts/MultiLineChart'
 import type { GroupComparisonData } from '@/shared/types/api'
-import { format, parseISO } from 'date-fns'
 
 interface GroupComparisonViewProps {
   data: GroupComparisonData[] | undefined
@@ -12,25 +11,17 @@ export function GroupComparisonView({
   data,
   loading,
 }: GroupComparisonViewProps) {
-  const formatDate = (dateStr: string) => {
-    try {
-      return format(parseISO(dateStr), 'MMM d')
-    } catch {
-      return dateStr
-    }
-  }
-
   // Total participants across all groups
   const totalParticipants = data?.reduce((sum, g) => sum + g.total_participants, 0) || 0
 
-  // Prepare multi-series chart data
+  // Prepare multi-series chart data (use original ISO dates for proper sorting)
   const prepareSeriesData = (
     getValue: (d: GroupComparisonData['daily_data'][0]) => number | null
   ) =>
     data?.map((group) => ({
       name: group.group_name,
       data: group.daily_data.map((d) => ({
-        date: formatDate(d.date),
+        date: d.date,  // Keep original ISO date for proper sorting
         value: getValue(d),
       })),
     })) || []
@@ -44,7 +35,7 @@ export function GroupComparisonView({
   const reportingSeries = data?.map((group) => ({
     name: group.group_name,
     data: group.daily_data.map((d) => ({
-      date: formatDate(d.date),
+      date: d.date,  // Keep original ISO date for proper sorting
       value: group.total_participants > 0
         ? Math.round((d.participants_reporting / group.total_participants) * 100)
         : 0,
@@ -55,7 +46,7 @@ export function GroupComparisonView({
   const questionnaireSeries = data?.map((group) => ({
     name: group.group_name,
     data: group.daily_data.map((d) => ({
-      date: formatDate(d.date),
+      date: d.date,  // Keep original ISO date for proper sorting
       value: group.total_participants > 0
         ? Math.round((d.questionnaire_count / group.total_participants) * 100)
         : 0,
@@ -160,19 +151,19 @@ export function GroupComparisonView({
       <h4 className="text-md font-medium text-gray-700">Physiological Comparisons</h4>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <Card title="Avg Resting Heart Rate by Group">
-          <MultiLineChart series={hrSeries} height="280px" />
+          <MultiLineChart series={hrSeries} height="280px" formatDates />
         </Card>
 
         <Card title="Avg Sleep Hours by Group">
-          <MultiLineChart series={sleepSeries} height="280px" />
+          <MultiLineChart series={sleepSeries} height="280px" formatDates />
         </Card>
 
         <Card title="Avg HRV by Group">
-          <MultiLineChart series={hrvSeries} height="280px" />
+          <MultiLineChart series={hrvSeries} height="280px" formatDates />
         </Card>
 
         <Card title="Avg Steps by Group">
-          <MultiLineChart series={stepsSeries} height="280px" />
+          <MultiLineChart series={stepsSeries} height="280px" formatDates />
         </Card>
       </div>
 
@@ -180,11 +171,11 @@ export function GroupComparisonView({
       <h4 className="text-md font-medium text-gray-700">Data Quality Comparisons</h4>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <Card title="Physio Reporting Rate (%) by Group">
-          <MultiLineChart series={reportingSeries} height="280px" />
+          <MultiLineChart series={reportingSeries} height="280px" formatDates />
         </Card>
 
         <Card title="Questionnaire Completion (%) by Group">
-          <MultiLineChart series={questionnaireSeries} height="280px" />
+          <MultiLineChart series={questionnaireSeries} height="280px" formatDates />
         </Card>
       </div>
     </div>

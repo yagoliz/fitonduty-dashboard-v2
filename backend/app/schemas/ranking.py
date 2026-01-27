@@ -8,6 +8,7 @@ class RankingResponse(BaseModel):
     rank: int
     total_participants: int
     data_volume_mb: float
+    completion_rate: float  # 0-100, based on (volume / (max_daily_volume * total_days))
 
 
 class GroupRankingResponse(BaseModel):
@@ -15,6 +16,7 @@ class GroupRankingResponse(BaseModel):
     username: str
     rank: int
     data_volume_mb: float
+    completion_rate: float  # 0-100
 
 
 class RankingHistoryResponse(BaseModel):
