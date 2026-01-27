@@ -1,4 +1,4 @@
-FROM node:20-slim AS builder
+FROM docker.io/node:20-slim AS builder
 
 WORKDIR /app
 
@@ -23,7 +23,7 @@ ENV NODE_ENV=production
 RUN pnpm build --mode production
 
 # Production stage with nginx
-FROM nginx:alpine
+FROM docker.io/nginx:alpine
 
 # Copy built assets
 COPY --from=builder /app/dist /usr/share/nginx/html
