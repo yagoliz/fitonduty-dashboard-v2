@@ -10,6 +10,8 @@ import type {
   GroupRanking,
   QuestionnaireRanking,
   Questionnaire,
+  GroupsComparisonResponse,
+  GroupAggregatedResponse,
 } from '../types/api'
 
 // Groups
@@ -175,5 +177,35 @@ export function useGroupQuestionnaireRankings(userId: number) {
       return data
     },
     enabled: !!userId,
+  })
+}
+
+// Admin - Group Comparison (all groups)
+export function useGroupsComparison(startDate: string, endDate: string) {
+  return useQuery({
+    queryKey: ['admin', 'groups', 'comparison', startDate, endDate],
+    queryFn: async () => {
+      const { data } = await apiClient.get<GroupsComparisonResponse>(
+        '/api/v1/admin/groups/comparison',
+        { params: { start_date: startDate, end_date: endDate } }
+      )
+      return data
+    },
+    enabled: !!startDate && !!endDate,
+  })
+}
+
+// Admin - Single Group Aggregation
+export function useGroupAggregation(groupId: number | null, startDate: string, endDate: string) {
+  return useQuery({
+    queryKey: ['admin', 'groups', groupId, 'aggregated', startDate, endDate],
+    queryFn: async () => {
+      const { data } = await apiClient.get<GroupAggregatedResponse>(
+        `/api/v1/admin/groups/${groupId}/aggregated`,
+        { params: { start_date: startDate, end_date: endDate } }
+      )
+      return data
+    },
+    enabled: !!groupId && !!startDate && !!endDate,
   })
 }

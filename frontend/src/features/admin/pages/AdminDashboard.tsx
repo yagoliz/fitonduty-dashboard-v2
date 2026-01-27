@@ -3,9 +3,10 @@ import { useAuthStore } from '@/shared/stores/authStore'
 import { useUIStore } from '@/shared/stores/uiStore'
 import { useDateRangeStore } from '@/shared/stores/dateRangeStore'
 import { Button } from '@/shared/components/ui/Button'
-import { Card } from '@/shared/components/ui/Card'
 import { DatePicker } from '@/shared/components/ui/DatePicker'
 import { ParticipantDetail } from '../components/ParticipantDetail'
+import { GroupAggregationView } from '../components/GroupAggregationView'
+import { GroupComparisonView } from '../components/GroupComparisonView'
 import {
   useGroups,
   useGroupParticipants,
@@ -14,8 +15,10 @@ import {
   useAnomalies,
   useQuestionnaires,
   useLatestDataDate,
+  useGroupsComparison,
+  useGroupAggregation,
 } from '@/shared/hooks/useApi'
-import { format, subDays } from 'date-fns'
+import { format } from 'date-fns'
 
 export function AdminDashboard() {
   const { user, logout } = useAuthStore()
@@ -63,6 +66,19 @@ export function AdminDashboard() {
 
   const { data: questionnaires, isLoading: loadingQuestionnaires } = useQuestionnaires(
     selectedParticipantId || 0,
+    formattedStartDate(),
+    formattedEndDate()
+  )
+
+  // Fetch group comparison data (when no group selected)
+  const { data: groupsComparison, isLoading: loadingComparison } = useGroupsComparison(
+    formattedStartDate(),
+    formattedEndDate()
+  )
+
+  // Fetch single group aggregated data (when group selected but no participant)
+  const { data: groupAggregation, isLoading: loadingAggregation } = useGroupAggregation(
+    selectedGroupId,
     formattedStartDate(),
     formattedEndDate()
   )
@@ -132,55 +148,54 @@ export function AdminDashboard() {
             </div>
           )}
 
-          {/* Date Selection */}
-          {selectedParticipantId && (
-            <>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Snapshot Date
-                </label>
-                <DatePicker
-                  value={snapshotDate}
-                  onChange={(e) => setSnapshotDate(e.target.value)}
-                  max={format(new Date(), 'yyyy-MM-dd')}
-                />
-                {latestDate && (
-                  <p className="text-xs text-gray-500 mt-1">Latest: {latestDate}</p>
-                )}
-              </div>
+          {/* Trend Period - always visible */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Trend Period
+            </label>
+            <div className="flex gap-2">
+              <Button
+                variant={mode === 'last_7' ? 'primary' : 'outline'}
+                size="sm"
+                className="flex-1"
+                onClick={() => setMode('last_7')}
+              >
+                7d
+              </Button>
+              <Button
+                variant={mode === 'last_30' ? 'primary' : 'outline'}
+                size="sm"
+                className="flex-1"
+                onClick={() => setMode('last_30')}
+              >
+                30d
+              </Button>
+              <Button
+                variant={mode === 'last_90' ? 'primary' : 'outline'}
+                size="sm"
+                className="flex-1"
+                onClick={() => setMode('last_90')}
+              >
+                90d
+              </Button>
+            </div>
+          </div>
 
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Trend Period
-                </label>
-                <div className="flex gap-2">
-                  <Button
-                    variant={mode === 'last_7' ? 'primary' : 'outline'}
-                    size="sm"
-                    className="flex-1"
-                    onClick={() => setMode('last_7')}
-                  >
-                    7d
-                  </Button>
-                  <Button
-                    variant={mode === 'last_30' ? 'primary' : 'outline'}
-                    size="sm"
-                    className="flex-1"
-                    onClick={() => setMode('last_30')}
-                  >
-                    30d
-                  </Button>
-                  <Button
-                    variant={mode === 'last_90' ? 'primary' : 'outline'}
-                    size="sm"
-                    className="flex-1"
-                    onClick={() => setMode('last_90')}
-                  >
-                    90d
-                  </Button>
-                </div>
-              </div>
-            </>
+          {/* Snapshot Date - only when participant selected */}
+          {selectedParticipantId && (
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Snapshot Date
+              </label>
+              <DatePicker
+                value={snapshotDate}
+                onChange={(e) => setSnapshotDate(e.target.value)}
+                max={format(new Date(), 'yyyy-MM-dd')}
+              />
+              {latestDate && (
+                <p className="text-xs text-gray-500 mt-1">Latest: {latestDate}</p>
+              )}
+            </div>
           )}
         </div>
 
@@ -203,7 +218,9 @@ export function AdminDashboard() {
         {/* Toggle Button */}
         <button
           onClick={toggleSidebar}
-          className="fixed top-4 left-4 z-50 p-2 bg-white rounded-lg shadow-md hover:bg-gray-50"
+          className={`fixed top-4 z-50 p-2 bg-white rounded-lg shadow-md hover:bg-gray-50 transition-all duration-300 ${
+            sidebarOpen ? 'left-[15rem]' : 'left-4'
+          }`}
         >
           <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
@@ -217,8 +234,8 @@ export function AdminDashboard() {
               {selectedParticipantId && selectedParticipant
                 ? `${selectedParticipant.username}'s Health Data`
                 : selectedGroupId
-                  ? 'Group Overview'
-                  : 'Select a Group and Participant'}
+                  ? `${groups?.find((g) => g.id === selectedGroupId)?.group_name || 'Group'} Overview`
+                  : 'All Groups Overview'}
             </h2>
 
             {/* Content */}
@@ -232,21 +249,16 @@ export function AdminDashboard() {
                 loading={isLoading}
               />
             ) : selectedGroupId ? (
-              <Card>
-                <div className="p-8 text-center text-gray-500">
-                  <p>Select a participant from the sidebar to view their health data.</p>
-                  <p className="text-sm mt-2">
-                    {participants?.length || 0} participants in this group
-                  </p>
-                </div>
-              </Card>
+              <GroupAggregationView
+                groupName={groups?.find((g) => g.id === selectedGroupId)?.group_name || ''}
+                data={groupAggregation}
+                loading={loadingAggregation}
+              />
             ) : (
-              <Card>
-                <div className="p-8 text-center text-gray-500">
-                  <p>Select a group from the sidebar to get started.</p>
-                  <p className="text-sm mt-2">{groups?.length || 0} groups available</p>
-                </div>
-              </Card>
+              <GroupComparisonView
+                data={groupsComparison?.groups}
+                loading={loadingComparison}
+              />
             )}
           </div>
         </div>

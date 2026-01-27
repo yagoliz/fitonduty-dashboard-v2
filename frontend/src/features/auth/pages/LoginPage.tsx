@@ -1,4 +1,4 @@
-import { useState, FormEvent } from 'react'
+import { useState, FormEvent, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAuthStore } from '@/shared/stores/authStore'
 import { Button } from '@/shared/components/ui/Button'
@@ -12,15 +12,17 @@ export function LoginPage() {
   const [localError, setLocalError] = useState('')
 
   // If already logged in, redirect
-  if (user) {
-    const redirectPath =
-      user.role === 'admin'
-        ? '/admin'
-        : user.role === 'supervisor'
-          ? '/supervisor'
-          : '/participant'
-    navigate(redirectPath, { replace: true })
-  }
+  useEffect(() => {
+    if (user) {
+      const redirectPath =
+        user.role === 'admin'
+          ? '/admin'
+          : user.role === 'supervisor'
+            ? '/supervisor'
+            : '/participant'
+      navigate(redirectPath, { replace: true })
+    }
+  }, [user, navigate])
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault()

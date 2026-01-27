@@ -26,7 +26,13 @@ apiClient.interceptors.response.use(
   async (error: AxiosError) => {
     const originalRequest = error.config as InternalAxiosRequestConfig & { _retry?: boolean }
 
-    if (error.response?.status === 401 && !originalRequest._retry) {
+    // Don't attempt refresh if:
+    // - Not a 401 error
+    // - Already retried this request
+    // - The failing request IS the refresh endpoint (prevents infinite loop)
+    const isRefreshRequest = originalRequest.url?.includes('/auth/refresh')
+
+    if (error.response?.status === 401 && !originalRequest._retry && !isRefreshRequest) {
       originalRequest._retry = true
 
       try {
@@ -40,6 +46,11 @@ apiClient.interceptors.response.use(
       } catch {
         useAuthStore.getState().logout()
       }
+    }
+
+    // If refresh endpoint failed, logout immediately
+    if (error.response?.status === 401 && isRefreshRequest) {
+      useAuthStore.getState().logout()
     }
 
     return Promise.reject(error)

@@ -89,7 +89,7 @@ export interface QuestionnaireRanking {
   rank: number
   total_participants: number
   completion_rate: number
-  days_completed: number
+  questionnaire_days: number
 }
 
 // Questionnaire types
@@ -100,4 +100,38 @@ export interface Questionnaire {
   motivation_level: number | null
   sleep_hours: number | null
   recovery_morning: number | null
+}
+
+// Admin aggregation types
+export interface GroupDailyData {
+  date: string
+  physio_count: number
+  participants_reporting: number
+  avg_resting_hr: number | null
+  avg_max_hr: number | null
+  avg_sleep_hours: number | null
+  avg_hrv_rest: number | null
+  avg_step_count: number | null
+  questionnaire_count: number
+  avg_sleep_quality: number | null
+  avg_fatigue_level: number | null
+  avg_motivation_level: number | null
+}
+
+export interface GroupComparisonData {
+  group_id: number
+  group_name: string
+  total_participants: number
+  daily_data: GroupDailyData[]
+}
+
+export interface GroupsComparisonResponse {
+  groups: GroupComparisonData[]
+}
+
+export interface GroupAggregatedResponse {
+  group_id: number
+  group_name: string
+  total_participants: number
+  daily_data: GroupDailyData[]
 }
