@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import { useAuthStore } from '@/shared/stores/authStore'
 import { useUIStore } from '@/shared/stores/uiStore'
 import { useDateRangeStore } from '@/shared/stores/dateRangeStore'
@@ -13,21 +13,47 @@ import {
   useHealthMetrics,
   useDailyHealth,
   useAnomalies,
+  useAnomaliesRange,
   useQuestionnaires,
   useLatestDataDate,
   useGroupsComparison,
   useGroupAggregation,
 } from '@/shared/hooks/useApi'
-import { format } from 'date-fns'
+import { format, subDays, parseISO } from 'date-fns'
+
+type TrendMode = 'last_7' | 'last_30' | 'last_90'
 
 export function AdminDashboard() {
   const { user, logout } = useAuthStore()
   const { sidebarOpen, toggleSidebar } = useUIStore()
-  const { mode, setMode, formattedStartDate, formattedEndDate } = useDateRangeStore()
+  const { mode: globalMode, setMode: setGlobalMode, formattedStartDate, formattedEndDate } = useDateRangeStore()
 
   const [selectedGroupId, setSelectedGroupId] = useState<number | null>(null)
   const [selectedParticipantId, setSelectedParticipantId] = useState<number | null>(null)
-  const [snapshotDate, setSnapshotDate] = useState(format(new Date(), 'yyyy-MM-dd'))
+  const [snapshotDate, setSnapshotDate] = useState('')
+  const [participantTrendMode, setParticipantTrendMode] = useState<TrendMode>('last_30')
+
+  // Use local mode for participant, global mode for groups
+  const effectiveMode = selectedParticipantId ? participantTrendMode : globalMode
+  const setEffectiveMode = selectedParticipantId
+    ? setParticipantTrendMode
+    : setGlobalMode
+
+  // Calculate trend date range based on snapshot date (for participant view)
+  const { trendStartDate, trendEndDate } = useMemo(() => {
+    if (!snapshotDate) {
+      return { trendStartDate: '', trendEndDate: '' }
+    }
+
+    const endDate = parseISO(snapshotDate)
+    const days = participantTrendMode === 'last_7' ? 7 : participantTrendMode === 'last_30' ? 30 : 90
+    const startDate = subDays(endDate, days)
+
+    return {
+      trendStartDate: format(startDate, 'yyyy-MM-dd'),
+      trendEndDate: format(endDate, 'yyyy-MM-dd'),
+    }
+  }, [snapshotDate, participantTrendMode])
 
   // Fetch groups
   const { data: groups, isLoading: loadingGroups } = useGroups()
@@ -41,17 +67,18 @@ export function AdminDashboard() {
   // Fetch latest data date for selected participant
   const { data: latestDate } = useLatestDataDate(selectedParticipantId || 0)
 
+  // Set snapshot date to latest available when participant changes
   useEffect(() => {
     if (latestDate) {
       setSnapshotDate(latestDate)
     }
-  }, [latestDate])
+  }, [latestDate, selectedParticipantId])
 
-  // Fetch participant data
+  // Fetch participant data (using trend dates based on snapshot date)
   const { data: healthMetrics, isLoading: loadingMetrics } = useHealthMetrics(
     selectedParticipantId || 0,
-    formattedStartDate(),
-    formattedEndDate()
+    trendStartDate,
+    trendEndDate
   )
 
   const { data: dailyHealth, isLoading: loadingDaily } = useDailyHealth(
@@ -64,10 +91,16 @@ export function AdminDashboard() {
     snapshotDate
   )
 
+  const { data: anomaliesRange, isLoading: loadingAnomaliesRange } = useAnomaliesRange(
+    selectedParticipantId || 0,
+    trendStartDate,
+    trendEndDate
+  )
+
   const { data: questionnaires, isLoading: loadingQuestionnaires } = useQuestionnaires(
     selectedParticipantId || 0,
-    formattedStartDate(),
-    formattedEndDate()
+    trendStartDate,
+    trendEndDate
   )
 
   // Fetch group comparison data (when no group selected)
@@ -88,7 +121,7 @@ export function AdminDashboard() {
     setSelectedParticipantId(null)
   }, [selectedGroupId])
 
-  const isLoading = loadingMetrics || loadingDaily || loadingAnomalies || loadingQuestionnaires
+  const isLoading = loadingMetrics || loadingDaily || loadingAnomalies || loadingAnomaliesRange || loadingQuestionnaires
 
   return (
     <div className="flex h-screen bg-gray-50">
@@ -155,26 +188,26 @@ export function AdminDashboard() {
             </label>
             <div className="flex gap-2">
               <Button
-                variant={mode === 'last_7' ? 'primary' : 'outline'}
+                variant={effectiveMode === 'last_7' ? 'primary' : 'outline'}
                 size="sm"
                 className="flex-1"
-                onClick={() => setMode('last_7')}
+                onClick={() => setEffectiveMode('last_7')}
               >
                 7d
               </Button>
               <Button
-                variant={mode === 'last_30' ? 'primary' : 'outline'}
+                variant={effectiveMode === 'last_30' ? 'primary' : 'outline'}
                 size="sm"
                 className="flex-1"
-                onClick={() => setMode('last_30')}
+                onClick={() => setEffectiveMode('last_30')}
               >
                 30d
               </Button>
               <Button
-                variant={mode === 'last_90' ? 'primary' : 'outline'}
+                variant={effectiveMode === 'last_90' ? 'primary' : 'outline'}
                 size="sm"
                 className="flex-1"
-                onClick={() => setMode('last_90')}
+                onClick={() => setEffectiveMode('last_90')}
               >
                 90d
               </Button>
@@ -194,6 +227,11 @@ export function AdminDashboard() {
               />
               {latestDate && (
                 <p className="text-xs text-gray-500 mt-1">Latest: {latestDate}</p>
+              )}
+              {trendStartDate && trendEndDate && (
+                <p className="text-xs text-gray-500 mt-1">
+                  Trends: {trendStartDate} to {trendEndDate}
+                </p>
               )}
             </div>
           )}
@@ -245,6 +283,7 @@ export function AdminDashboard() {
                 dailyHealth={dailyHealth}
                 healthMetrics={healthMetrics}
                 anomalies={anomalies}
+                anomaliesRange={anomaliesRange}
                 questionnaires={questionnaires}
                 loading={isLoading}
               />

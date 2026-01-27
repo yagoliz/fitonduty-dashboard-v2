@@ -1,5 +1,6 @@
 import { BaseChart } from './BaseChart'
 import type { EChartsOption } from 'echarts'
+import { format, parseISO } from 'date-fns'
 
 interface SeriesData {
   name: string
@@ -13,6 +14,7 @@ interface MultiLineChartProps {
   yAxisLabel?: string
   loading?: boolean
   height?: string
+  formatDates?: boolean // If true, dates are ISO strings that need formatting
 }
 
 // Default colors for multiple series
@@ -33,9 +35,31 @@ export function MultiLineChart({
   yAxisLabel,
   loading,
   height = '300px',
+  formatDates = false,
 }: MultiLineChartProps) {
-  // Get all unique dates across all series
-  const allDates = [...new Set(series.flatMap((s) => s.data.map((d) => d.date)))].sort()
+  // Get all unique dates across all series and sort chronologically
+  const allDates = [...new Set(series.flatMap((s) => s.data.map((d) => d.date)))]
+    .sort((a, b) => {
+      // Try to parse as dates for proper sorting
+      const dateA = new Date(a)
+      const dateB = new Date(b)
+      if (!isNaN(dateA.getTime()) && !isNaN(dateB.getTime())) {
+        return dateA.getTime() - dateB.getTime()
+      }
+      // Fallback to string comparison
+      return a.localeCompare(b)
+    })
+
+  // Format dates for display if needed
+  const displayDates = formatDates
+    ? allDates.map((d) => {
+        try {
+          return format(parseISO(d), 'MMM d')
+        } catch {
+          return d
+        }
+      })
+    : allDates
 
   const option: EChartsOption = {
     title: title
@@ -65,7 +89,7 @@ export function MultiLineChart({
     },
     xAxis: {
       type: 'category',
-      data: allDates,
+      data: displayDates,
       axisLine: { lineStyle: { color: '#e5e7eb' } },
       axisLabel: { color: '#6b7280', fontSize: 11 },
     },
