@@ -241,7 +241,7 @@ export function ParticipantDetail({
       <div className="space-y-4">
         <h4 className="text-md font-medium text-gray-700">Psychological Trends</h4>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <Card title="Sleep Quality (1-10)">
+          <Card title="Sleep Quality (1-100)">
             {sleepQualityData.length > 0 ? (
               <LineChart data={sleepQualityData} color="#06b6d4" height="200px" />
             ) : (
@@ -250,7 +250,7 @@ export function ParticipantDetail({
               </div>
             )}
           </Card>
-          <Card title="Fatigue Level (1-10)">
+          <Card title="Fatigue Level (1-100)">
             {fatigueData.length > 0 ? (
               <LineChart data={fatigueData} color="#f97316" height="200px" />
             ) : (
@@ -259,7 +259,7 @@ export function ParticipantDetail({
               </div>
             )}
           </Card>
-          <Card title="Motivation Level (1-10)">
+          <Card title="Motivation Level (1-100)">
             {motivationData.length > 0 ? (
               <LineChart data={motivationData} color="#10b981" height="200px" />
             ) : (

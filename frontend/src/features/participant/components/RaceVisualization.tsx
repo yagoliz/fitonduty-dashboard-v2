@@ -68,8 +68,8 @@ export function RaceVisualization({
       },
       xAxis: {
         type: 'value',
-        min: -0.1,
-        max: 1.15,
+        min: -0.01,
+        max: 1.01,
         axisLabel: {
           formatter: (value: number) => `${Math.round(value * 100)}%`,
           color: '#6b7280',
