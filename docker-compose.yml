@@ -20,5 +20,5 @@ services:
     ports:
       - "3000:3000"
     depends_on:
-      - api
+      - fitonduty-dashboard-v2-api
     restart: unless-stopped
