@@ -70,25 +70,13 @@ export function SupervisorDashboard() {
     }
   }
 
+  // Calculate latest averages for summary (filter for days with data)
+  const latestData = groupData?.filter((d) => d.physio_data_count > 0).slice(-1)[0]
+
   // Prepare chart data
-  const physioCountData = groupData?.map((d) => ({
-    date: formatDate(d.date),
-    value: d.physio_data_count,
-  })) || []
-
-  const questionnaireCountData = groupData?.map((d) => ({
-    date: formatDate(d.date),
-    value: d.questionnaire_data_count,
-  })) || []
-
   const avgHrData = groupData?.map((d) => ({
     date: formatDate(d.date),
     value: d.avg_resting_hr,
-  })) || []
-
-  const avgSleepData = groupData?.map((d) => ({
-    date: formatDate(d.date),
-    value: d.avg_sleep_hours,
   })) || []
 
   const avgHrvData = groupData?.map((d) => ({
@@ -96,9 +84,36 @@ export function SupervisorDashboard() {
     value: d.avg_hrv_rest,
   })) || []
 
+  const avgSleepData = groupData?.map((d) => ({
+    date: formatDate(d.date),
+    value: d.avg_sleep_hours,
+  })) || []
+
   const avgStepsData = groupData?.map((d) => ({
     date: formatDate(d.date),
     value: d.avg_step_count,
+  })) || []
+
+  // Data quality: reporting rate (physio count / total participants)
+  const reportingData = groupData?.map((d) => ({
+    date: formatDate(d.date),
+    value: groupInfo?.participant_count && groupInfo.participant_count > 0
+      ? Math.round((d.physio_data_count / groupInfo.participant_count) * 100)
+      : 0,
+  })) || []
+
+  // Questionnaire completion rate
+  const questionnaireCompletionData = groupData?.map((d) => ({
+    date: formatDate(d.date),
+    value: groupInfo?.participant_count && groupInfo.participant_count > 0
+      ? Math.round((d.questionnaire_data_count / groupInfo.participant_count) * 100)
+      : 0,
+  })) || []
+
+  // Questionnaire metrics
+  const avgSleepQualityData = groupData?.map((d) => ({
+    date: formatDate(d.date),
+    value: d.avg_sleep_quality,
   })) || []
 
   const avgFatigueData = groupData?.map((d) => ({
@@ -137,7 +152,7 @@ export function SupervisorDashboard() {
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Header with date controls */}
-        <div className="flex items-center justify-between mb-8">
+        <div className="flex items-center justify-between mb-6">
           <div>
             <h2 className="text-2xl font-bold text-gray-900">
               {loadingInfo ? 'Loading...' : groupInfo?.group_name || 'Group Overview'}
@@ -171,75 +186,124 @@ export function SupervisorDashboard() {
           </div>
         </div>
 
-        {/* Data Collection Overview */}
-        <section className="mb-8">
-          <h3 className="text-lg font-semibold text-gray-900 mb-4">Data Collection</h3>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <Card title="Physiological Data Count">
-              {isLoading ? (
-                <div className="h-64 animate-pulse bg-gray-100 rounded" />
-              ) : (
-                <LineChart data={physioCountData} color="#3b82f6" height="250px" yAxisLabel="Records" />
-              )}
-            </Card>
-            <Card title="Questionnaire Data Count">
-              {isLoading ? (
-                <div className="h-64 animate-pulse bg-gray-100 rounded" />
-              ) : (
-                <LineChart data={questionnaireCountData} color="#22c55e" height="250px" yAxisLabel="Records" />
-              )}
-            </Card>
-          </div>
-        </section>
+        {/* Summary Card */}
+        <Card title="Group Averages (Latest)">
+          {isLoading ? (
+            <div className="h-16 animate-pulse bg-gray-100 rounded" />
+          ) : (
+            <div className="grid grid-cols-5 gap-4 text-center">
+              <div>
+                <p className="text-2xl font-bold text-red-500">
+                  {latestData?.avg_resting_hr?.toFixed(0) ?? '--'}
+                </p>
+                <p className="text-xs text-gray-500">Avg Resting HR</p>
+              </div>
+              <div>
+                <p className="text-2xl font-bold text-red-600">
+                  {latestData?.avg_max_hr?.toFixed(0) ?? '--'}
+                </p>
+                <p className="text-xs text-gray-500">Avg Max HR</p>
+              </div>
+              <div>
+                <p className="text-2xl font-bold text-blue-500">
+                  {latestData?.avg_sleep_hours?.toFixed(1) ?? '--'}
+                </p>
+                <p className="text-xs text-gray-500">Avg Sleep (hrs)</p>
+              </div>
+              <div>
+                <p className="text-2xl font-bold text-purple-500">
+                  {latestData?.avg_hrv_rest?.toFixed(0) ?? '--'}
+                </p>
+                <p className="text-xs text-gray-500">Avg HRV (ms)</p>
+              </div>
+              <div>
+                <p className="text-2xl font-bold text-green-500">
+                  {latestData?.avg_step_count?.toLocaleString(undefined, { maximumFractionDigits: 0 }) ?? '--'}
+                </p>
+                <p className="text-xs text-gray-500">Avg Steps</p>
+              </div>
+            </div>
+          )}
+        </Card>
 
-        {/* Group Average Metrics */}
-        <section>
-          <h3 className="text-lg font-semibold text-gray-900 mb-4">Group Averages</h3>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            <Card title="Average Resting Heart Rate">
-              {isLoading ? (
-                <div className="h-48 animate-pulse bg-gray-100 rounded" />
-              ) : (
-                <LineChart data={avgHrData} color="#ef4444" height="200px" yAxisLabel="BPM" />
-              )}
-            </Card>
-            <Card title="Average Sleep">
-              {isLoading ? (
-                <div className="h-48 animate-pulse bg-gray-100 rounded" />
-              ) : (
-                <LineChart data={avgSleepData} color="#3b82f6" height="200px" yAxisLabel="Hours" />
-              )}
-            </Card>
-            <Card title="Average HRV">
-              {isLoading ? (
-                <div className="h-48 animate-pulse bg-gray-100 rounded" />
-              ) : (
-                <LineChart data={avgHrvData} color="#8b5cf6" height="200px" yAxisLabel="ms" />
-              )}
-            </Card>
-            <Card title="Average Steps">
-              {isLoading ? (
-                <div className="h-48 animate-pulse bg-gray-100 rounded" />
-              ) : (
-                <LineChart data={avgStepsData} color="#22c55e" height="200px" yAxisLabel="Steps" />
-              )}
-            </Card>
-            <Card title="Average Fatigue Level">
-              {isLoading ? (
-                <div className="h-48 animate-pulse bg-gray-100 rounded" />
-              ) : (
-                <LineChart data={avgFatigueData} color="#f97316" height="200px" yAxisLabel="Level" />
-              )}
-            </Card>
-            <Card title="Average Motivation Level">
-              {isLoading ? (
-                <div className="h-48 animate-pulse bg-gray-100 rounded" />
-              ) : (
-                <LineChart data={avgMotivationData} color="#06b6d4" height="200px" yAxisLabel="Level" />
-              )}
-            </Card>
-          </div>
-        </section>
+        {/* Physiological Charts Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-6">
+          <Card title="Avg Resting Heart Rate">
+            {isLoading ? (
+              <div className="h-56 animate-pulse bg-gray-100 rounded" />
+            ) : (
+              <LineChart data={avgHrData} color="#ef4444" height="220px" />
+            )}
+          </Card>
+
+          <Card title="Avg HRV">
+            {isLoading ? (
+              <div className="h-56 animate-pulse bg-gray-100 rounded" />
+            ) : (
+              <LineChart data={avgHrvData} color="#8b5cf6" height="220px" />
+            )}
+          </Card>
+
+          <Card title="Avg Sleep Hours">
+            {isLoading ? (
+              <div className="h-56 animate-pulse bg-gray-100 rounded" />
+            ) : (
+              <LineChart data={avgSleepData} color="#3b82f6" height="220px" />
+            )}
+          </Card>
+
+          <Card title="Avg Steps">
+            {isLoading ? (
+              <div className="h-56 animate-pulse bg-gray-100 rounded" />
+            ) : (
+              <LineChart data={avgStepsData} color="#22c55e" height="220px" />
+            )}
+          </Card>
+
+          <Card title="Physio Reporting Rate (%)">
+            {isLoading ? (
+              <div className="h-56 animate-pulse bg-gray-100 rounded" />
+            ) : (
+              <LineChart data={reportingData} color="#6366f1" height="220px" />
+            )}
+          </Card>
+
+          <Card title="Questionnaire Completion (%)">
+            {isLoading ? (
+              <div className="h-56 animate-pulse bg-gray-100 rounded" />
+            ) : (
+              <LineChart data={questionnaireCompletionData} color="#f59e0b" height="220px" />
+            )}
+          </Card>
+        </div>
+
+        {/* Questionnaire Metrics */}
+        <h4 className="text-md font-medium text-gray-700 mt-6">Questionnaire Metrics</h4>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-4">
+          <Card title="Avg Sleep Quality (1-100)">
+            {isLoading ? (
+              <div className="h-56 animate-pulse bg-gray-100 rounded" />
+            ) : (
+              <LineChart data={avgSleepQualityData} color="#06b6d4" height="220px" />
+            )}
+          </Card>
+
+          <Card title="Avg Fatigue Level (1-100)">
+            {isLoading ? (
+              <div className="h-56 animate-pulse bg-gray-100 rounded" />
+            ) : (
+              <LineChart data={avgFatigueData} color="#f97316" height="220px" />
+            )}
+          </Card>
+
+          <Card title="Avg Motivation Level (1-100)">
+            {isLoading ? (
+              <div className="h-56 animate-pulse bg-gray-100 rounded" />
+            ) : (
+              <LineChart data={avgMotivationData} color="#10b981" height="220px" />
+            )}
+          </Card>
+        </div>
       </main>
     </div>
   )

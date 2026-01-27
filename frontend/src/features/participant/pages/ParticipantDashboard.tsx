@@ -1,6 +1,5 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import { useAuthStore } from '@/shared/stores/authStore'
-import { useDateRangeStore } from '@/shared/stores/dateRangeStore'
 import { Button } from '@/shared/components/ui/Button'
 import { Card } from '@/shared/components/ui/Card'
 import { DatePicker } from '@/shared/components/ui/DatePicker'
@@ -17,12 +16,14 @@ import {
   useQuestionnaires,
   useLatestDataDate,
 } from '@/shared/hooks/useApi'
-import { format } from 'date-fns'
+import { format, subDays, parseISO } from 'date-fns'
+
+type TrendMode = 'last_7' | 'last_30' | 'last_90'
 
 export function ParticipantDashboard() {
   const { user, logout } = useAuthStore()
-  const { mode, setMode, formattedStartDate, formattedEndDate } = useDateRangeStore()
   const [snapshotDate, setSnapshotDate] = useState('')
+  const [trendMode, setTrendMode] = useState<TrendMode>('last_7')
 
   const userId = user?.id || 0
 
@@ -32,10 +33,24 @@ export function ParticipantDashboard() {
   useEffect(() => {
     if (latestDate && !snapshotDate) {
       setSnapshotDate(latestDate)
-    } else if (!snapshotDate) {
-      setSnapshotDate(format(new Date(), 'yyyy-MM-dd'))
     }
   }, [latestDate, snapshotDate])
+
+  // Calculate trend date range based on snapshot date and mode
+  const { trendStartDate, trendEndDate } = useMemo(() => {
+    if (!snapshotDate) {
+      return { trendStartDate: '', trendEndDate: '' }
+    }
+
+    const endDate = parseISO(snapshotDate)
+    const days = trendMode === 'last_7' ? 7 : trendMode === 'last_30' ? 30 : 90
+    const startDate = subDays(endDate, days)
+
+    return {
+      trendStartDate: format(startDate, 'yyyy-MM-dd'),
+      trendEndDate: format(endDate, 'yyyy-MM-dd'),
+    }
+  }, [snapshotDate, trendMode])
 
   // Rankings
   const { data: dataRanking, isLoading: loadingDataRanking } = useDataConsistencyRanking(userId)
@@ -45,16 +60,16 @@ export function ParticipantDashboard() {
   // Daily snapshot
   const { data: dailyHealth, isLoading: loadingDaily } = useDailyHealth(userId, snapshotDate)
 
-  // Trends
+  // Trends (based on snapshot date)
   const { data: healthMetrics, isLoading: loadingMetrics } = useHealthMetrics(
     userId,
-    formattedStartDate(),
-    formattedEndDate()
+    trendStartDate,
+    trendEndDate
   )
   const { data: questionnaires, isLoading: loadingQuestionnaires } = useQuestionnaires(
     userId,
-    formattedStartDate(),
-    formattedEndDate()
+    trendStartDate,
+    trendEndDate
   )
 
   return (
@@ -138,26 +153,33 @@ export function ParticipantDashboard() {
         {/* Section 3: Health Trends */}
         <section>
           <div className="flex items-center justify-between mb-6">
-            <h2 className="text-xl font-bold text-gray-900">Health Trends</h2>
+            <div>
+              <h2 className="text-xl font-bold text-gray-900">Health Trends</h2>
+              {trendStartDate && trendEndDate && (
+                <p className="text-sm text-gray-500">
+                  {trendStartDate} to {trendEndDate}
+                </p>
+              )}
+            </div>
             <div className="flex gap-2">
               <Button
-                variant={mode === 'last_7' ? 'primary' : 'outline'}
+                variant={trendMode === 'last_7' ? 'primary' : 'outline'}
                 size="sm"
-                onClick={() => setMode('last_7')}
+                onClick={() => setTrendMode('last_7')}
               >
                 7 Days
               </Button>
               <Button
-                variant={mode === 'last_30' ? 'primary' : 'outline'}
+                variant={trendMode === 'last_30' ? 'primary' : 'outline'}
                 size="sm"
-                onClick={() => setMode('last_30')}
+                onClick={() => setTrendMode('last_30')}
               >
                 30 Days
               </Button>
               <Button
-                variant={mode === 'last_90' ? 'primary' : 'outline'}
+                variant={trendMode === 'last_90' ? 'primary' : 'outline'}
                 size="sm"
-                onClick={() => setMode('last_90')}
+                onClick={() => setTrendMode('last_90')}
               >
                 90 Days
               </Button>
