@@ -1,5 +1,5 @@
 services:
-  api:
+  fitonduty-dashboard-v2-api:
     build:
       context: ./backend
       dockerfile: Dockerfile
@@ -11,7 +11,7 @@ services:
       - DEBUG=false
     restart: unless-stopped
 
-  web:
+  fitonduty-dashboard-v2-web:
     build:
       context: ./frontend
       dockerfile: Dockerfile
