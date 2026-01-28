@@ -166,7 +166,7 @@ export function SupervisorDashboard() {
           <div className="flex justify-between h-16">
             <div className="flex items-center">
               <h1 className="text-xl font-bold text-gray-900 dark:text-gray-100">FitonDuty</h1>
-              <span className="ml-4 px-3 py-1 bg-primary-100 dark:bg-primary-900/30 text-primary-700 dark:text-primary-400 rounded-full text-sm">
+              <span className="ml-4 px-3 py-1 bg-rose-100 dark:bg-rose-900/30 text-rose-700 dark:text-rose-400 rounded-full text-sm">
                 Supervisor
               </span>
             </div>

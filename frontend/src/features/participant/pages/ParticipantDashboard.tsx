@@ -80,6 +80,9 @@ export function ParticipantDashboard() {
           <div className="flex justify-between h-16">
             <div className="flex items-center">
               <h1 className="text-xl font-bold text-gray-900 dark:text-gray-100">FitonDuty</h1>
+              <span className="ml-4 px-3 py-1 bg-cyan-100 dark:bg-cyan-900/30 text-cyan-700 dark:text-cyan-400 rounded-full text-sm">
+                Participant
+              </span>
             </div>
             <div className="flex items-center gap-4">
               <span className="text-sm text-gray-600 dark:text-gray-400">{user?.username}</span>
