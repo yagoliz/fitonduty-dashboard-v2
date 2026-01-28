@@ -7,11 +7,12 @@ interface DoughnutChartProps {
   data: { name: string; value: number; color?: string }[]
   loading?: boolean
   height?: string
+  unit?: string
 }
 
 const defaultColors = ['#10b981', '#22c55e', '#eab308', '#f97316', '#ef4444']
 
-export function DoughnutChart({ title, data, loading, height = '300px' }: DoughnutChartProps) {
+export function DoughnutChart({ title, data, loading, height = '300px', unit = '%' }: DoughnutChartProps) {
   const theme = useChartTheme()
 
   const option: EChartsOption = {
@@ -24,7 +25,7 @@ export function DoughnutChart({ title, data, loading, height = '300px' }: Doughn
       : undefined,
     tooltip: {
       trigger: 'item',
-      formatter: '{b}: {c}%',
+      formatter: `{b}: {c}${unit}`,
       backgroundColor: theme.tooltipBg,
       borderColor: theme.tooltipBorder,
       textStyle: { color: theme.tooltipText },

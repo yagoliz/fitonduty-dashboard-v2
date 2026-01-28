@@ -7,6 +7,7 @@ import { RaceVisualization } from '../components/RaceVisualization'
 import { RankingCard } from '../components/RankingCard'
 import { DailySnapshot } from '../components/DailySnapshot'
 import { HealthTrends } from '../components/HealthTrends'
+import { DoughnutChart } from '@/shared/components/charts/DoughnutChart'
 import {
   useDataConsistencyRanking,
   useQuestionnaireRanking,
@@ -71,6 +72,30 @@ export function ParticipantDashboard() {
     trendStartDate,
     trendEndDate
   )
+
+  // Heart rate zones for doughnut chart
+  const zonesData = dailyHealth?.heart_rate_zones
+    ? [
+        { name: 'Very Light', value: dailyHealth.heart_rate_zones.very_light_percent || 0, color: '#10b981' },
+        { name: 'Light', value: dailyHealth.heart_rate_zones.light_percent || 0, color: '#22c55e' },
+        { name: 'Moderate', value: dailyHealth.heart_rate_zones.moderate_percent || 0, color: '#eab308' },
+        { name: 'Intense', value: dailyHealth.heart_rate_zones.intense_percent || 0, color: '#f97316' },
+        { name: 'Beast Mode', value: dailyHealth.heart_rate_zones.beast_mode_percent || 0, color: '#ef4444' },
+      ]
+    : []
+
+  // Movement speeds for doughnut chart (in minutes)
+  const movementData = dailyHealth?.movement_speeds
+    ? [
+        { name: 'Walking', value: dailyHealth.movement_speeds.walking_minutes || 0, color: '#22c55e' },
+        { name: 'Fast Walking', value: dailyHealth.movement_speeds.walking_fast_minutes || 0, color: '#eab308' },
+        { name: 'Jogging', value: dailyHealth.movement_speeds.jogging_minutes || 0, color: '#f97316' },
+        { name: 'Running', value: dailyHealth.movement_speeds.running_minutes || 0, color: '#ef4444' },
+      ]
+    : []
+
+  const total_time = movementData.reduce((sum, current) => sum + current.value, 0);
+  const speed_card_title = `Movement Speeds. Total Time: ${total_time} minutes`
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
@@ -151,6 +176,37 @@ export function ParticipantDashboard() {
           </div>
 
           <DailySnapshot data={dailyHealth} loading={loadingDaily} />
+
+          {/* Heart Rate Zones and Movement Speeds */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+            <Card title="Heart Rate Zones">
+              {loadingDaily ? (
+                <div className="h-[200px] flex items-center justify-center">
+                  <div className="animate-pulse bg-gray-200 dark:bg-gray-700 rounded-full w-32 h-32" />
+                </div>
+              ) : zonesData.length > 0 ? (
+                <DoughnutChart data={zonesData} height="200px" />
+              ) : (
+                <div className="h-[200px] flex items-center justify-center text-gray-500 dark:text-gray-400">
+                  No heart rate zone data available
+                </div>
+              )}
+            </Card>
+
+            <Card title={speed_card_title}>
+              {loadingDaily ? (
+                <div className="h-[200px] flex items-center justify-center">
+                  <div className="animate-pulse bg-gray-200 dark:bg-gray-700 rounded-full w-32 h-32" />
+                </div>
+              ) : movementData.length > 0 ? (
+                <DoughnutChart data={movementData} height="200px" unit=" min" />
+              ) : (
+                <div className="h-[200px] flex items-center justify-center text-gray-500 dark:text-gray-400">
+                  No walking speed data available
+                </div>
+              )}
+            </Card>
+          </div>
         </section>
 
         {/* Section 3: Health Trends */}

@@ -117,6 +117,9 @@ export function ParticipantDetail({
         { name: 'Running', value: dailyHealth.movement_speeds.running_minutes || 0, color: '#ef4444' },
       ]
     : []
+  
+  const total_time = movementData.reduce((sum, current) => sum + current.value, 0);
+  const speed_card_title = `Movement Speeds. Total Time: ${total_time} minutes`
 
   // Anomaly timeline data
   const anomalyData = anomalies?.map((a) => ({
@@ -200,9 +203,9 @@ export function ParticipantDetail({
               </div>
             )}
           </Card>
-          <Card title="Movement Speeds (minutes)">
+          <Card title={speed_card_title}>
             {movementData.some(d => d.value > 0) ? (
-              <DoughnutChart data={movementData} height="200px" />
+              <DoughnutChart data={movementData} height="200px" unit="min" />
             ) : (
               <div className="h-48 flex items-center justify-center text-gray-400 dark:text-gray-500">
                 No data available
