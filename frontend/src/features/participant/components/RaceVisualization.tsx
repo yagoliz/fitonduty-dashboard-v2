@@ -124,7 +124,7 @@ export function RaceVisualization({
         },
       ],
       series: [
-        // Other participants
+        // Other participants (tooltip disabled for privacy)
         {
           type: 'scatter',
           data: otherData,
@@ -135,14 +135,17 @@ export function RaceVisualization({
             borderWidth: 2,
           },
           emphasis: {
-            itemStyle: { shadowBlur: 10, shadowColor: 'rgba(0,0,0,0.2)' },
+            disabled: true,
+          },
+          tooltip: {
+            show: false,
           },
           z: 1,
         },
         // Current user
         {
           type: 'scatter',
-          data: [[currentNormalized, 0]],
+          data: [{ value: [currentNormalized, 0], name: 'You' }],
           symbolSize: 50,
           itemStyle: {
             color: 'rgba(250, 204, 21, 0.4)',
@@ -177,9 +180,9 @@ export function RaceVisualization({
         borderColor: theme.tooltipBorder,
         textStyle: { color: theme.tooltipText },
         formatter: (params: { data: { name?: string; value: number[] } }) => {
-          if (params.data.name) {
+          if (params.data.name === 'You') {
             const pct = Math.round(params.data.value[0] * 100)
-            return `${params.data.name}: ${pct}%`
+            return `Your completion: ${pct}%`
           }
           return ''
         },
