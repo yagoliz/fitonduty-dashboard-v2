@@ -1,4 +1,5 @@
 import { BaseChart } from './BaseChart'
+import { useChartTheme } from '@/shared/hooks/useChartTheme'
 import type { EChartsOption } from 'echarts'
 import { format, parseISO } from 'date-fns'
 
@@ -19,13 +20,13 @@ interface MultiLineChartProps {
 
 // Default colors for multiple series
 const DEFAULT_COLORS = [
-  '#3b82f6', // blue
+  '#06b6d4', // cyan (primary)
   '#ef4444', // red
   '#10b981', // green
   '#f59e0b', // amber
   '#8b5cf6', // violet
   '#ec4899', // pink
-  '#06b6d4', // cyan
+  '#3b82f6', // blue
   '#84cc16', // lime
 ]
 
@@ -37,6 +38,8 @@ export function MultiLineChart({
   height = '300px',
   formatDates = false,
 }: MultiLineChartProps) {
+  const theme = useChartTheme()
+
   // Get all unique dates across all series and sort chronologically
   const allDates = [...new Set(series.flatMap((s) => s.data.map((d) => d.date)))]
     .sort((a, b) => {
@@ -66,19 +69,19 @@ export function MultiLineChart({
       ? {
           text: title,
           left: 'center',
-          textStyle: { fontSize: 14, fontWeight: 600 },
+          textStyle: { fontSize: 14, fontWeight: 600, color: theme.textColor },
         }
       : undefined,
     tooltip: {
       trigger: 'axis',
-      backgroundColor: 'rgba(255, 255, 255, 0.95)',
-      borderColor: '#e5e7eb',
-      textStyle: { color: '#111827' },
+      backgroundColor: theme.tooltipBg,
+      borderColor: theme.tooltipBorder,
+      textStyle: { color: theme.tooltipText },
     },
     legend: {
       data: series.map((s) => s.name),
       bottom: 0,
-      textStyle: { fontSize: 11, color: '#6b7280' },
+      textStyle: { fontSize: 11, color: theme.textColor },
     },
     grid: {
       left: '3%',
@@ -90,18 +93,18 @@ export function MultiLineChart({
     xAxis: {
       type: 'category',
       data: displayDates,
-      axisLine: { lineStyle: { color: '#e5e7eb' } },
-      axisLabel: { color: '#6b7280', fontSize: 11 },
+      axisLine: { lineStyle: { color: theme.axisColor } },
+      axisLabel: { color: theme.textColor, fontSize: 11 },
     },
     yAxis: {
       type: 'value',
       name: yAxisLabel,
       nameLocation: 'middle',
       nameGap: 50,
-      nameTextStyle: { color: '#6b7280' },
+      nameTextStyle: { color: theme.textColor },
       axisLine: { show: false },
-      splitLine: { lineStyle: { color: '#f3f4f6' } },
-      axisLabel: { color: '#6b7280', fontSize: 11 },
+      splitLine: { lineStyle: { color: theme.gridColor } },
+      axisLabel: { color: theme.textColor, fontSize: 11 },
     },
     series: series.map((s, index) => {
       const color = s.color || DEFAULT_COLORS[index % DEFAULT_COLORS.length]

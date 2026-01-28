@@ -1,5 +1,6 @@
 import { useMemo } from 'react'
 import { BaseChart } from '@/shared/components/charts/BaseChart'
+import { useChartTheme } from '@/shared/hooks/useChartTheme'
 import type { EChartsOption } from 'echarts'
 import type { GroupRanking } from '@/shared/types/api'
 
@@ -16,6 +17,8 @@ export function RaceVisualization({
   title = 'Your Data Consistency',
   loading,
 }: RaceVisualizationProps) {
+  const theme = useChartTheme()
+
   const option = useMemo<EChartsOption>(() => {
     if (!participants.length) {
       return {}
@@ -54,7 +57,7 @@ export function RaceVisualization({
         text: title,
         left: 'center',
         top: 5,
-        textStyle: { fontSize: 14, fontWeight: 600 },
+        textStyle: { fontSize: 14, fontWeight: 600, color: theme.textColor },
       },
       grid: {
         left: 40,
@@ -68,10 +71,10 @@ export function RaceVisualization({
         max: 1.01,
         axisLabel: {
           formatter: (value: number) => `${Math.round(value * 100)}%`,
-          color: '#6b7280',
+          color: theme.textColor,
         },
         splitLine: { show: false },
-        axisLine: { lineStyle: { color: '#e5e7eb' } },
+        axisLine: { lineStyle: { color: theme.axisColor } },
       },
       yAxis: {
         type: 'value',
@@ -88,14 +91,14 @@ export function RaceVisualization({
           top: 80,
           bottom: 90,
           shape: { r: 4 },
-          style: { fill: 'rgba(239, 68, 68, 0.15)' },
+          style: { fill: 'rgba(6, 182, 212, 0.15)' },
           z: -1,
         },
         // Start line
         {
           type: 'line',
           shape: { x1: 40, y1: 60, x2: 40, y2: 200 },
-          style: { stroke: '#9ca3af', lineWidth: 2 },
+          style: { stroke: theme.axisColor, lineWidth: 2 },
         },
         // Finish line
         {
@@ -110,7 +113,7 @@ export function RaceVisualization({
           type: 'text',
           left: 35,
           top: 45,
-          style: { text: 'Start', fill: '#9ca3af', fontSize: 11 },
+          style: { text: 'Start', fill: theme.textColor, fontSize: 11 },
         },
         // Finish label
         {
@@ -163,13 +166,16 @@ export function RaceVisualization({
             formatter: `Position: ${rank}/${participants.length}`,
             fontSize: 12,
             fontWeight: 600,
-            color: '#374151',
+            color: theme.textColor,
           },
           z: 3,
         },
       ],
       tooltip: {
         trigger: 'item',
+        backgroundColor: theme.tooltipBg,
+        borderColor: theme.tooltipBorder,
+        textStyle: { color: theme.tooltipText },
         formatter: (params: { data: { name?: string; value: number[] } }) => {
           if (params.data.name) {
             const pct = Math.round(params.data.value[0] * 100)
@@ -179,11 +185,11 @@ export function RaceVisualization({
         },
       },
     }
-  }, [participants, currentUserId, title])
+  }, [participants, currentUserId, title, theme])
 
   if (!participants.length && !loading) {
     return (
-      <div className="h-64 flex items-center justify-center text-gray-400">
+      <div className="h-64 flex items-center justify-center text-gray-400 dark:text-gray-500">
         No ranking data available
       </div>
     )

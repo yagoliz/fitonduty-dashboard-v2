@@ -34,11 +34,11 @@ export function RankingCard({
       <Card title={title}>
         <div className="space-y-4 animate-pulse">
           <div className="flex items-center justify-between">
-            <div className="h-10 w-16 bg-gray-200 rounded" />
-            <div className="h-4 w-24 bg-gray-200 rounded" />
+            <div className="h-10 w-16 bg-gray-200 dark:bg-gray-700 rounded" />
+            <div className="h-4 w-24 bg-gray-200 dark:bg-gray-700 rounded" />
           </div>
-          <div className="h-2 bg-gray-200 rounded-full" />
-          <div className="h-4 w-32 bg-gray-200 rounded" />
+          <div className="h-2 bg-gray-200 dark:bg-gray-700 rounded-full" />
+          <div className="h-4 w-32 bg-gray-200 dark:bg-gray-700 rounded" />
         </div>
       </Card>
     )
@@ -51,18 +51,18 @@ export function RankingCard({
           <span className={`text-4xl font-bold ${colors.split(' ')[0]}`}>
             #{rank ?? '--'}
           </span>
-          <span className="text-gray-500">
+          <span className="text-gray-500 dark:text-gray-400">
             of {totalParticipants ?? '--'} participants
           </span>
         </div>
-        <div className="w-full bg-gray-200 rounded-full h-2.5">
+        <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2.5">
           <div
             className={`h-2.5 rounded-full transition-all duration-500 ${colors.split(' ')[1]}`}
             style={{ width: `${rankPercent}%` }}
           />
         </div>
         {(subtitle || value) && (
-          <p className="text-sm text-gray-500">
+          <p className="text-sm text-gray-500 dark:text-gray-400">
             {subtitle}: {value ?? '--'}
           </p>
         )}

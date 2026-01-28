@@ -19,8 +19,8 @@ function MetricCard({ label, value, unit, color, loading }: MetricCardProps) {
   if (loading) {
     return (
       <Card className="text-center p-4 animate-pulse">
-        <div className="h-8 w-16 bg-gray-200 rounded mx-auto mb-2" />
-        <div className="h-4 w-20 bg-gray-200 rounded mx-auto" />
+        <div className="h-8 w-16 bg-gray-200 dark:bg-gray-700 rounded mx-auto mb-2" />
+        <div className="h-4 w-20 bg-gray-200 dark:bg-gray-700 rounded mx-auto" />
       </Card>
     )
   }
@@ -31,7 +31,7 @@ function MetricCard({ label, value, unit, color, loading }: MetricCardProps) {
         {value ?? '--'}
         {unit && value && <span className="text-sm font-normal ml-1">{unit}</span>}
       </p>
-      <p className="text-sm text-gray-500 mt-1">{label}</p>
+      <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">{label}</p>
     </Card>
   )
 }
@@ -158,19 +158,19 @@ export function SupervisorDashboard() {
   const isLoading = loadingInfo || loadingData
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
       {/* Navbar */}
-      <nav className="bg-white border-b border-gray-200 sticky top-0 z-50">
+      <nav className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between h-16">
             <div className="flex items-center">
-              <h1 className="text-xl font-bold text-gray-900">FitonDuty</h1>
-              <span className="ml-4 px-3 py-1 bg-primary-100 text-primary-700 rounded-full text-sm">
+              <h1 className="text-xl font-bold text-gray-900 dark:text-gray-100">FitonDuty</h1>
+              <span className="ml-4 px-3 py-1 bg-primary-100 dark:bg-primary-900/30 text-primary-700 dark:text-primary-400 rounded-full text-sm">
                 Supervisor
               </span>
             </div>
             <div className="flex items-center gap-4">
-              <span className="text-sm text-gray-600">{user?.username}</span>
+              <span className="text-sm text-gray-600 dark:text-gray-400">{user?.username}</span>
               <Button variant="ghost" size="sm" onClick={logout}>
                 Logout
               </Button>
@@ -183,10 +183,10 @@ export function SupervisorDashboard() {
         {/* Header with date controls */}
         <div className="flex items-center justify-between mb-6">
           <div>
-            <h2 className="text-2xl font-bold text-gray-900">
+            <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
               {loadingInfo ? 'Loading...' : groupInfo?.group_name || 'Group Overview'}
             </h2>
-            <p className="text-gray-500">
+            <p className="text-gray-500 dark:text-gray-400">
               {loadingInfo ? '--' : groupInfo?.participant_count || 0} participants
             </p>
           </div>
@@ -216,18 +216,18 @@ export function SupervisorDashboard() {
         </div>
 
         {/* Section 1: Completion Rates */}
-        <h4 className="text-md font-medium text-gray-700">Completion Rates</h4>
+        <h4 className="text-md font-medium text-gray-700 dark:text-gray-300">Completion Rates</h4>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-2">
           <Card title="Physio Reporting Rate (%)">
             {isLoading ? (
-              <div className="h-56 animate-pulse bg-gray-100 rounded" />
+              <div className="h-56 animate-pulse bg-gray-100 dark:bg-gray-700 rounded" />
             ) : (
               <LineChart data={reportingData} color="#6366f1" height="220px" />
             )}
           </Card>
           <Card title="Questionnaire Completion (%)">
             {isLoading ? (
-              <div className="h-56 animate-pulse bg-gray-100 rounded" />
+              <div className="h-56 animate-pulse bg-gray-100 dark:bg-gray-700 rounded" />
             ) : (
               <LineChart data={questionnaireCompletionData} color="#f59e0b" height="220px" />
             )}
@@ -235,7 +235,7 @@ export function SupervisorDashboard() {
         </div>
 
         {/* Section 2: Physiological Group Averages */}
-        <h4 className="text-md font-medium text-gray-700 mt-6">Physiological Group Averages (Latest)</h4>
+        <h4 className="text-md font-medium text-gray-700 dark:text-gray-300 mt-6">Physiological Group Averages (Latest)</h4>
         {/* Row 1: HR, Max HR, HRV */}
         <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mt-2">
           <MetricCard
@@ -280,14 +280,14 @@ export function SupervisorDashboard() {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
           <Card title="Avg Resting Heart Rate">
             {isLoading ? (
-              <div className="h-56 animate-pulse bg-gray-100 rounded" />
+              <div className="h-56 animate-pulse bg-gray-100 dark:bg-gray-700 rounded" />
             ) : (
               <LineChart data={avgHrData} color="#ef4444" height="220px" />
             )}
           </Card>
           <Card title="Avg HRV">
             {isLoading ? (
-              <div className="h-56 animate-pulse bg-gray-100 rounded" />
+              <div className="h-56 animate-pulse bg-gray-100 dark:bg-gray-700 rounded" />
             ) : (
               <LineChart data={avgHrvData} color="#8b5cf6" height="220px" />
             )}
@@ -297,40 +297,40 @@ export function SupervisorDashboard() {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
           <Card title="Avg Steps">
             {isLoading ? (
-              <div className="h-56 animate-pulse bg-gray-100 rounded" />
+              <div className="h-56 animate-pulse bg-gray-100 dark:bg-gray-700 rounded" />
             ) : (
               <LineChart data={avgStepsData} color="#22c55e" height="220px" />
             )}
           </Card>
           <Card title="Avg Sleep Hours">
             {isLoading ? (
-              <div className="h-56 animate-pulse bg-gray-100 rounded" />
+              <div className="h-56 animate-pulse bg-gray-100 dark:bg-gray-700 rounded" />
             ) : (
-              <LineChart data={avgSleepData} color="#3b82f6" height="220px" />
+              <LineChart data={avgSleepData} color="#06b6d4" height="220px" />
             )}
           </Card>
         </div>
 
         {/* Section 3: Questionnaire Metrics */}
-        <h4 className="text-md font-medium text-gray-700 mt-6">Questionnaire Metrics</h4>
+        <h4 className="text-md font-medium text-gray-700 dark:text-gray-300 mt-6">Questionnaire Metrics</h4>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-4">
           <Card title="Avg Sleep Quality (1-100)">
             {isLoading ? (
-              <div className="h-56 animate-pulse bg-gray-100 rounded" />
+              <div className="h-56 animate-pulse bg-gray-100 dark:bg-gray-700 rounded" />
             ) : (
               <LineChart data={avgSleepQualityData} color="#06b6d4" height="220px" />
             )}
           </Card>
           <Card title="Avg Fatigue Level (1-100)">
             {isLoading ? (
-              <div className="h-56 animate-pulse bg-gray-100 rounded" />
+              <div className="h-56 animate-pulse bg-gray-100 dark:bg-gray-700 rounded" />
             ) : (
               <LineChart data={avgFatigueData} color="#f97316" height="220px" />
             )}
           </Card>
           <Card title="Avg Motivation Level (1-100)">
             {isLoading ? (
-              <div className="h-56 animate-pulse bg-gray-100 rounded" />
+              <div className="h-56 animate-pulse bg-gray-100 dark:bg-gray-700 rounded" />
             ) : (
               <LineChart data={avgMotivationData} color="#10b981" height="220px" />
             )}

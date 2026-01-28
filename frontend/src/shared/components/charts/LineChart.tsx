@@ -1,4 +1,5 @@
 import { BaseChart } from './BaseChart'
+import { useChartTheme } from '@/shared/hooks/useChartTheme'
 import type { EChartsOption } from 'echarts'
 
 interface LineChartProps {
@@ -13,24 +14,26 @@ interface LineChartProps {
 export function LineChart({
   title,
   data,
-  color = '#3b82f6',
+  color = '#06b6d4',
   yAxisLabel,
   loading,
   height = '300px',
 }: LineChartProps) {
+  const theme = useChartTheme()
+
   const option: EChartsOption = {
     title: title
       ? {
           text: title,
           left: 'center',
-          textStyle: { fontSize: 14, fontWeight: 600 },
+          textStyle: { fontSize: 14, fontWeight: 600, color: theme.textColor },
         }
       : undefined,
     tooltip: {
       trigger: 'axis',
-      backgroundColor: 'rgba(255, 255, 255, 0.95)',
-      borderColor: '#e5e7eb',
-      textStyle: { color: '#111827' },
+      backgroundColor: theme.tooltipBg,
+      borderColor: theme.tooltipBorder,
+      textStyle: { color: theme.tooltipText },
     },
     grid: {
       left: '3%',
@@ -42,18 +45,18 @@ export function LineChart({
     xAxis: {
       type: 'category',
       data: data.map((d) => d.date),
-      axisLine: { lineStyle: { color: '#e5e7eb' } },
-      axisLabel: { color: '#6b7280', fontSize: 11 },
+      axisLine: { lineStyle: { color: theme.axisColor } },
+      axisLabel: { color: theme.textColor, fontSize: 11 },
     },
     yAxis: {
       type: 'value',
       name: yAxisLabel,
       nameLocation: 'middle',
       nameGap: 50,
-      nameTextStyle: { color: '#6b7280' },
+      nameTextStyle: { color: theme.textColor },
       axisLine: { show: false },
-      splitLine: { lineStyle: { color: '#f3f4f6' } },
-      axisLabel: { color: '#6b7280', fontSize: 11 },
+      splitLine: { lineStyle: { color: theme.gridColor } },
+      axisLabel: { color: theme.textColor, fontSize: 11 },
     },
     series: [
       {

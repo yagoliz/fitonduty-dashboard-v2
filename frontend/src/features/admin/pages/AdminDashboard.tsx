@@ -124,26 +124,26 @@ export function AdminDashboard() {
   const isLoading = loadingMetrics || loadingDaily || loadingAnomalies || loadingAnomaliesRange || loadingQuestionnaires
 
   return (
-    <div className="flex h-screen bg-gray-50">
+    <div className="flex h-screen bg-gray-50 dark:bg-gray-900">
       {/* Sidebar */}
       <aside
         className={`${
           sidebarOpen ? 'w-72' : 'w-0'
-        } bg-white border-r border-gray-200 transition-all duration-300 overflow-hidden flex flex-col`}
+        } bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 transition-all duration-300 overflow-hidden flex flex-col`}
       >
-        <div className="p-4 border-b border-gray-100">
-          <h1 className="text-xl font-bold text-gray-900">FitonDuty</h1>
-          <p className="text-sm text-gray-500">Admin Dashboard</p>
+        <div className="p-4 border-b border-gray-100 dark:border-gray-700">
+          <h1 className="text-xl font-bold text-gray-900 dark:text-gray-100">FitonDuty</h1>
+          <p className="text-sm text-gray-500 dark:text-gray-400">Admin Dashboard</p>
         </div>
 
         <div className="flex-1 p-4 space-y-4 overflow-y-auto">
           {/* Group Selection */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
               Select Group
             </label>
             <select
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-primary-500 focus:border-transparent"
               value={selectedGroupId || ''}
               onChange={(e) => setSelectedGroupId(e.target.value ? Number(e.target.value) : null)}
               disabled={loadingGroups}
@@ -160,11 +160,11 @@ export function AdminDashboard() {
           {/* Participant Selection */}
           {selectedGroupId && (
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                 Select Participant
               </label>
               <select
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-primary-500 focus:border-transparent"
                 value={selectedParticipantId || ''}
                 onChange={(e) =>
                   setSelectedParticipantId(e.target.value ? Number(e.target.value) : null)
@@ -183,7 +183,7 @@ export function AdminDashboard() {
 
           {/* Trend Period - always visible */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
               Trend Period
             </label>
             <div className="flex gap-2">
@@ -217,7 +217,7 @@ export function AdminDashboard() {
           {/* Snapshot Date - only when participant selected */}
           {selectedParticipantId && (
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                 Snapshot Date
               </label>
               <DatePicker
@@ -226,10 +226,10 @@ export function AdminDashboard() {
                 max={format(new Date(), 'yyyy-MM-dd')}
               />
               {latestDate && (
-                <p className="text-xs text-gray-500 mt-1">Latest: {latestDate}</p>
+                <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">Latest: {latestDate}</p>
               )}
               {trendStartDate && trendEndDate && (
-                <p className="text-xs text-gray-500 mt-1">
+                <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
                   Trends: {trendStartDate} to {trendEndDate}
                 </p>
               )}
@@ -238,11 +238,11 @@ export function AdminDashboard() {
         </div>
 
         {/* User Info */}
-        <div className="p-4 border-t border-gray-100">
+        <div className="p-4 border-t border-gray-100 dark:border-gray-700">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm font-medium text-gray-900">{user?.username}</p>
-              <p className="text-xs text-gray-500">Admin</p>
+              <p className="text-sm font-medium text-gray-900 dark:text-gray-100">{user?.username}</p>
+              <p className="text-xs text-gray-500 dark:text-gray-400">Admin</p>
             </div>
             <Button variant="ghost" size="sm" onClick={logout}>
               Logout
@@ -256,7 +256,7 @@ export function AdminDashboard() {
         {/* Toggle Button */}
         <button
           onClick={toggleSidebar}
-          className={`fixed top-4 z-50 p-2 bg-white rounded-lg shadow-md hover:bg-gray-50 transition-all duration-300 ${
+          className={`fixed top-4 z-50 p-2 bg-white dark:bg-gray-800 rounded-lg shadow-md hover:bg-gray-50 dark:hover:bg-gray-700 text-gray-900 dark:text-gray-100 transition-all duration-300 ${
             sidebarOpen ? 'left-[15rem]' : 'left-4'
           }`}
         >
@@ -268,7 +268,7 @@ export function AdminDashboard() {
         <div className="p-8 pt-16">
           <div className="max-w-7xl mx-auto">
             {/* Header */}
-            <h2 className="text-2xl font-bold text-gray-900 mb-6">
+            <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-6">
               {selectedParticipantId && selectedParticipant
                 ? `${selectedParticipant.username}'s Health Data`
                 : selectedGroupId

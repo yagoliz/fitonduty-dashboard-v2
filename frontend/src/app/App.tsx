@@ -5,6 +5,7 @@ import { ProtectedRoute } from '@/features/auth/components/ProtectedRoute'
 import { AdminDashboard } from '@/features/admin/pages/AdminDashboard'
 import { ParticipantDashboard } from '@/features/participant/pages/ParticipantDashboard'
 import { SupervisorDashboard } from '@/features/supervisor/pages/SupervisorDashboard'
+import { ThemeToggle } from '@/shared/components/ui/ThemeToggle'
 import { useEffect } from 'react'
 
 function App() {
@@ -17,63 +18,66 @@ function App() {
   }, [isAuthenticated, token, user, fetchUser])
 
   return (
-    <Routes>
-      <Route path="/login" element={<LoginPage />} />
+    <div>
+      <ThemeToggle />
+      <Routes>
+        <Route path="/login" element={<LoginPage />} />
 
-      {/* Admin routes */}
-      <Route
-        path="/admin/*"
-        element={
-          <ProtectedRoute allowedRoles={['admin']}>
-            <AdminDashboard />
-          </ProtectedRoute>
-        }
-      />
+        {/* Admin routes */}
+        <Route
+          path="/admin/*"
+          element={
+            <ProtectedRoute allowedRoles={['admin']}>
+              <AdminDashboard />
+            </ProtectedRoute>
+          }
+        />
 
-      {/* Participant routes */}
-      <Route
-        path="/participant/*"
-        element={
-          <ProtectedRoute allowedRoles={['participant']}>
-            <ParticipantDashboard />
-          </ProtectedRoute>
-        }
-      />
+        {/* Participant routes */}
+        <Route
+          path="/participant/*"
+          element={
+            <ProtectedRoute allowedRoles={['participant']}>
+              <ParticipantDashboard />
+            </ProtectedRoute>
+          }
+        />
 
-      {/* Supervisor routes */}
-      <Route
-        path="/supervisor/*"
-        element={
-          <ProtectedRoute allowedRoles={['supervisor']}>
-            <SupervisorDashboard />
-          </ProtectedRoute>
-        }
-      />
+        {/* Supervisor routes */}
+        <Route
+          path="/supervisor/*"
+          element={
+            <ProtectedRoute allowedRoles={['supervisor']}>
+              <SupervisorDashboard />
+            </ProtectedRoute>
+          }
+        />
 
-      {/* Default redirect based on role */}
-      <Route
-        path="/"
-        element={
-          isAuthenticated && user ? (
-            <Navigate
-              to={
-                user.role === 'admin'
-                  ? '/admin'
-                  : user.role === 'supervisor'
-                    ? '/supervisor'
-                    : '/participant'
-              }
-              replace
-            />
-          ) : (
-            <Navigate to="/login" replace />
-          )
-        }
-      />
+        {/* Default redirect based on role */}
+        <Route
+          path="/"
+          element={
+            isAuthenticated && user ? (
+              <Navigate
+                to={
+                  user.role === 'admin'
+                    ? '/admin'
+                    : user.role === 'supervisor'
+                      ? '/supervisor'
+                      : '/participant'
+                }
+                replace
+              />
+            ) : (
+              <Navigate to="/login" replace />
+            )
+          }
+        />
 
-      {/* Catch all */}
-      <Route path="*" element={<Navigate to="/" replace />} />
-    </Routes>
+        {/* Catch all */}
+        <Route path="*" element={<Navigate to="/" replace />} />
+      </Routes>
+    </div>
   )
 }
 

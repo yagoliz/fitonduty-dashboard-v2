@@ -62,14 +62,14 @@ export function HealthTrends({ metrics, questionnaires, loading }: HealthTrendsP
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-      <h3 className="text-l font-bold text-gray-900">Physiological Trends</h3> <br></br>
+      <h3 className="text-l font-bold text-gray-900 dark:text-gray-100">Physiological Trends</h3> <br></br>
       <Card title="Heart Rate">
         {loading ? (
-          <div className="h-64 animate-pulse bg-gray-100 rounded" />
+          <div className="h-64 animate-pulse bg-gray-100 dark:bg-gray-700 rounded" />
         ) : (
           <MultiLineChart
             series={[
-              { name: 'Resting HR', data: restingHrData, color: '#3b82f6' },
+              { name: 'Resting HR', data: restingHrData, color: '#06b6d4' },
               { name: 'Max HR', data: maxHrData, color: '#ef4444' },
             ]}
             yAxisLabel="BPM"
@@ -81,7 +81,7 @@ export function HealthTrends({ metrics, questionnaires, loading }: HealthTrendsP
 
       <Card title="Heart Rate Variability">
         {loading ? (
-          <div className="h-64 animate-pulse bg-gray-100 rounded" />
+          <div className="h-64 animate-pulse bg-gray-100 dark:bg-gray-700 rounded" />
         ) : (
           <LineChart
             data={hrvData}
@@ -94,11 +94,11 @@ export function HealthTrends({ metrics, questionnaires, loading }: HealthTrendsP
 
       <Card title="Sleep Duration">
         {loading ? (
-          <div className="h-64 animate-pulse bg-gray-100 rounded" />
+          <div className="h-64 animate-pulse bg-gray-100 dark:bg-gray-700 rounded" />
         ) : (
           <LineChart
             data={sleepData}
-            color="#3b82f6"
+            color="#06b6d4"
             yAxisLabel="Hours"
             height="250px"
           />
@@ -107,7 +107,7 @@ export function HealthTrends({ metrics, questionnaires, loading }: HealthTrendsP
 
       <Card title="Steps">
         {loading ? (
-          <div className="h-64 animate-pulse bg-gray-100 rounded" />
+          <div className="h-64 animate-pulse bg-gray-100 dark:bg-gray-700 rounded" />
         ) : (
           <LineChart
             data={stepsData}
@@ -118,11 +118,11 @@ export function HealthTrends({ metrics, questionnaires, loading }: HealthTrendsP
         )}
       </Card>
 
-      <h3 className="text-l font-bold text-gray-900 md:col-span-2">Psychological Trends</h3>
+      <h3 className="text-l font-bold text-gray-900 dark:text-gray-100 md:col-span-2">Psychological Trends</h3>
       <div className="md:col-span-2 grid grid-cols-1 md:grid-cols-3 gap-6">
         <Card title="Sleep Quality (0-100)">
           {loading ? (
-            <div className="h-64 animate-pulse bg-gray-100 rounded" />
+            <div className="h-64 animate-pulse bg-gray-100 dark:bg-gray-700 rounded" />
           ) : (
             <LineChart
               data={sleepQualityData}
@@ -135,7 +135,7 @@ export function HealthTrends({ metrics, questionnaires, loading }: HealthTrendsP
 
         <Card title="Fatigue Level (0-100)">
           {loading ? (
-            <div className="h-64 animate-pulse bg-gray-100 rounded" />
+            <div className="h-64 animate-pulse bg-gray-100 dark:bg-gray-700 rounded" />
           ) : (
             <LineChart
               data={fatigueData}
@@ -148,7 +148,7 @@ export function HealthTrends({ metrics, questionnaires, loading }: HealthTrendsP
 
         <Card title="Motivation Level (0-100)">
           {loading ? (
-            <div className="h-64 animate-pulse bg-gray-100 rounded" />
+            <div className="h-64 animate-pulse bg-gray-100 dark:bg-gray-700 rounded" />
           ) : (
             <LineChart
               data={motivationData}

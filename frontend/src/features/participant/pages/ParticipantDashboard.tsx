@@ -73,16 +73,16 @@ export function ParticipantDashboard() {
   )
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
       {/* Navbar */}
-      <nav className="bg-white border-b border-gray-200 sticky top-0 z-50">
+      <nav className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between h-16">
             <div className="flex items-center">
-              <h1 className="text-xl font-bold text-gray-900">FitonDuty</h1>
+              <h1 className="text-xl font-bold text-gray-900 dark:text-gray-100">FitonDuty</h1>
             </div>
             <div className="flex items-center gap-4">
-              <span className="text-sm text-gray-600">{user?.username}</span>
+              <span className="text-sm text-gray-600 dark:text-gray-400">{user?.username}</span>
               <Button variant="ghost" size="sm" onClick={logout}>
                 Logout
               </Button>
@@ -94,7 +94,7 @@ export function ParticipantDashboard() {
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Section 1: Rankings */}
         <section className="mb-12">
-          <h2 className="text-xl font-bold text-gray-900 mb-6">Your Performance</h2>
+          <h2 className="text-xl font-bold text-gray-900 dark:text-gray-100 mb-6">Your Performance</h2>
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             <RankingCard
@@ -132,9 +132,9 @@ export function ParticipantDashboard() {
         <section className="mb-12">
           <div className="flex items-center justify-between mb-6">
             <div>
-              <h2 className="text-xl font-bold text-gray-900">Daily Snapshot</h2>
+              <h2 className="text-xl font-bold text-gray-900 dark:text-gray-100">Daily Snapshot</h2>
               {latestDate && (
-                <p className="text-sm text-gray-500">
+                <p className="text-sm text-gray-500 dark:text-gray-400">
                   Latest data: {latestDate}
                 </p>
               )}
@@ -154,9 +154,9 @@ export function ParticipantDashboard() {
         <section>
           <div className="flex items-center justify-between mb-6">
             <div>
-              <h2 className="text-xl font-bold text-gray-900">Health Trends</h2>
+              <h2 className="text-xl font-bold text-gray-900 dark:text-gray-100">Health Trends</h2>
               {trendStartDate && trendEndDate && (
-                <p className="text-sm text-gray-500">
+                <p className="text-sm text-gray-500 dark:text-gray-400">
                   {trendStartDate} to {trendEndDate}
                 </p>
               )}

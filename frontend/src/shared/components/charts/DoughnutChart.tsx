@@ -1,4 +1,5 @@
 import { BaseChart } from './BaseChart'
+import { useChartTheme } from '@/shared/hooks/useChartTheme'
 import type { EChartsOption } from 'echarts'
 
 interface DoughnutChartProps {
@@ -11,26 +12,28 @@ interface DoughnutChartProps {
 const defaultColors = ['#10b981', '#22c55e', '#eab308', '#f97316', '#ef4444']
 
 export function DoughnutChart({ title, data, loading, height = '300px' }: DoughnutChartProps) {
+  const theme = useChartTheme()
+
   const option: EChartsOption = {
     title: title
       ? {
           text: title,
           left: 'center',
-          textStyle: { fontSize: 14, fontWeight: 600 },
+          textStyle: { fontSize: 14, fontWeight: 600, color: theme.textColor },
         }
       : undefined,
     tooltip: {
       trigger: 'item',
       formatter: '{b}: {c}%',
-      backgroundColor: 'rgba(255, 255, 255, 0.95)',
-      borderColor: '#e5e7eb',
-      textStyle: { color: '#111827' },
+      backgroundColor: theme.tooltipBg,
+      borderColor: theme.tooltipBorder,
+      textStyle: { color: theme.tooltipText },
     },
     legend: {
       orient: 'vertical',
       right: '5%',
       top: 'center',
-      textStyle: { fontSize: 11, color: '#6b7280' },
+      textStyle: { fontSize: 11, color: theme.textColor },
     },
     series: [
       {

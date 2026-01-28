@@ -5,14 +5,42 @@
 :root {
   --color-hr: #ef4444;
   --color-hrv: #8b5cf6;
-  --color-sleep: #3b82f6;
+  --color-sleep: #06b6d4;
   --color-steps: #22c55e;
   --color-fatigue: #f97316;
   --color-motivation: #06b6d4;
+
+  /* Chart colors */
+  --color-chart-bg: #ffffff;
+  --color-chart-text: #374151;
+  --color-chart-grid: #f3f4f6;
+  --color-chart-axis: #e5e7eb;
+  --color-tooltip-bg: rgba(255, 255, 255, 0.95);
+  --color-tooltip-border: #e5e7eb;
+  --color-tooltip-text: #111827;
+}
+
+.dark {
+  --color-hr: #f87171;
+  --color-hrv: #a78bfa;
+  --color-sleep: #22d3ee;
+  --color-steps: #4ade80;
+  --color-fatigue: #fb923c;
+  --color-motivation: #22d3ee;
+
+  /* Chart colors - dark mode */
+  --color-chart-bg: #1f2937;
+  --color-chart-text: #d1d5db;
+  --color-chart-grid: #374151;
+  --color-chart-axis: #4b5563;
+  --color-tooltip-bg: rgba(31, 41, 55, 0.95);
+  --color-tooltip-border: #4b5563;
+  --color-tooltip-text: #f9fafb;
 }
 
 body {
   @apply bg-gray-50 text-gray-900 antialiased;
+  @apply dark:bg-gray-900 dark:text-gray-100;
 }
 
 /* Custom scrollbar */
@@ -22,13 +50,13 @@ body {
 }
 
 ::-webkit-scrollbar-track {
-  @apply bg-gray-100;
+  @apply bg-gray-100 dark:bg-gray-800;
 }
 
 ::-webkit-scrollbar-thumb {
-  @apply bg-gray-300 rounded-full;
+  @apply bg-gray-300 dark:bg-gray-600 rounded-full;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  @apply bg-gray-400;
+  @apply bg-gray-400 dark:bg-gray-500;
 }

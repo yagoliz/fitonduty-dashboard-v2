@@ -15,7 +15,7 @@ function MetricCard({ label, value, unit, color }: MetricCardProps) {
         {value ?? '--'}
         {unit && value && <span className="text-sm font-normal ml-1">{unit}</span>}
       </p>
-      <p className="text-sm text-gray-500 mt-1">{label}</p>
+      <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">{label}</p>
     </Card>
   )
 }
@@ -31,8 +31,8 @@ export function DailySnapshot({ data, loading }: DailySnapshotProps) {
       <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
         {[...Array(5)].map((_, i) => (
           <Card key={i} className="text-center p-4 animate-pulse">
-            <div className="h-8 w-16 bg-gray-200 rounded mx-auto mb-2" />
-            <div className="h-4 w-20 bg-gray-200 rounded mx-auto" />
+            <div className="h-8 w-16 bg-gray-200 dark:bg-gray-700 rounded mx-auto mb-2" />
+            <div className="h-4 w-20 bg-gray-200 dark:bg-gray-700 rounded mx-auto" />
           </Card>
         ))}
       </div>

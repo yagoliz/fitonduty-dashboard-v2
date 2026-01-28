@@ -19,7 +19,7 @@ function MetricCard({ label, value, unit, color }: MetricCardProps) {
         {value ?? '--'}
         {unit && value && <span className="text-sm font-normal ml-1">{unit}</span>}
       </p>
-      <p className="text-sm text-gray-500 mt-1">{label}</p>
+      <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">{label}</p>
     </Card>
   )
 }
@@ -131,8 +131,8 @@ export function ParticipantDetail({
         <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
           {[...Array(5)].map((_, i) => (
             <Card key={i} className="text-center p-4 animate-pulse">
-              <div className="h-8 w-16 bg-gray-200 rounded mx-auto mb-2" />
-              <div className="h-4 w-20 bg-gray-200 rounded mx-auto" />
+              <div className="h-8 w-16 bg-gray-200 dark:bg-gray-700 rounded mx-auto mb-2" />
+              <div className="h-4 w-20 bg-gray-200 dark:bg-gray-700 rounded mx-auto" />
             </Card>
           ))}
         </div>
@@ -140,7 +140,7 @@ export function ParticipantDetail({
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {[...Array(6)].map((_, i) => (
             <Card key={i}>
-              <div className="h-48 animate-pulse bg-gray-100 rounded" />
+              <div className="h-48 animate-pulse bg-gray-100 dark:bg-gray-700 rounded" />
             </Card>
           ))}
         </div>
@@ -150,11 +150,11 @@ export function ParticipantDetail({
 
   return (
     <div className="space-y-6">
-      <h3 className="text-lg font-semibold text-gray-900">{participantName}</h3>
+      <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">{participantName}</h3>
 
       {/* Daily Snapshot Section */}
       <div className="space-y-4">
-        <h4 className="text-md font-medium text-gray-700">Daily Snapshot</h4>
+        <h4 className="text-md font-medium text-gray-700 dark:text-gray-300">Daily Snapshot</h4>
 
         {/* Metric Cards */}
         <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
@@ -195,7 +195,7 @@ export function ParticipantDetail({
             {zonesData.length > 0 ? (
               <DoughnutChart data={zonesData} height="200px" />
             ) : (
-              <div className="h-48 flex items-center justify-center text-gray-400">
+              <div className="h-48 flex items-center justify-center text-gray-400 dark:text-gray-500">
                 No data available
               </div>
             )}
@@ -204,7 +204,7 @@ export function ParticipantDetail({
             {movementData.some(d => d.value > 0) ? (
               <DoughnutChart data={movementData} height="200px" />
             ) : (
-              <div className="h-48 flex items-center justify-center text-gray-400">
+              <div className="h-48 flex items-center justify-center text-gray-400 dark:text-gray-500">
                 No data available
               </div>
             )}
@@ -214,7 +214,7 @@ export function ParticipantDetail({
 
       {/* Health Trends Section */}
       <div className="space-y-4">
-        <h4 className="text-md font-medium text-gray-700">Health Trends</h4>
+        <h4 className="text-md font-medium text-gray-700 dark:text-gray-300">Health Trends</h4>
 
         {/* Row 1: Heart Rate (combined) + HRV */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -229,7 +229,7 @@ export function ParticipantDetail({
         {/* Row 2: Sleep + Steps */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <Card title="Sleep Hours">
-            <LineChart data={sleepData} color="#3b82f6" height="220px" />
+            <LineChart data={sleepData} color="#06b6d4" height="220px" />
           </Card>
           <Card title="Steps">
             <LineChart data={stepsData} color="#22c55e" height="220px" />
@@ -239,13 +239,13 @@ export function ParticipantDetail({
 
       {/* Psychological Trends Section */}
       <div className="space-y-4">
-        <h4 className="text-md font-medium text-gray-700">Psychological Trends</h4>
+        <h4 className="text-md font-medium text-gray-700 dark:text-gray-300">Psychological Trends</h4>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           <Card title="Sleep Quality (1-100)">
             {sleepQualityData.length > 0 ? (
               <LineChart data={sleepQualityData} color="#06b6d4" height="200px" />
             ) : (
-              <div className="h-48 flex items-center justify-center text-gray-400">
+              <div className="h-48 flex items-center justify-center text-gray-400 dark:text-gray-500">
                 No questionnaire data
               </div>
             )}
@@ -254,7 +254,7 @@ export function ParticipantDetail({
             {fatigueData.length > 0 ? (
               <LineChart data={fatigueData} color="#f97316" height="200px" />
             ) : (
-              <div className="h-48 flex items-center justify-center text-gray-400">
+              <div className="h-48 flex items-center justify-center text-gray-400 dark:text-gray-500">
                 No questionnaire data
               </div>
             )}
@@ -263,7 +263,7 @@ export function ParticipantDetail({
             {motivationData.length > 0 ? (
               <LineChart data={motivationData} color="#10b981" height="200px" />
             ) : (
-              <div className="h-48 flex items-center justify-center text-gray-400">
+              <div className="h-48 flex items-center justify-center text-gray-400 dark:text-gray-500">
                 No questionnaire data
               </div>
             )}
@@ -273,13 +273,13 @@ export function ParticipantDetail({
 
       {/* Anomaly Section */}
       <div className="space-y-4">
-        <h4 className="text-md font-medium text-gray-700">Anomaly Detection</h4>
+        <h4 className="text-md font-medium text-gray-700 dark:text-gray-300">Anomaly Detection</h4>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <Card title="Today's Anomaly Scores">
             {anomalyData.length > 0 ? (
               <LineChart data={anomalyData} color="#dc2626" height="220px" />
             ) : (
-              <div className="h-52 flex items-center justify-center text-gray-400">
+              <div className="h-52 flex items-center justify-center text-gray-400 dark:text-gray-500">
                 No anomalies detected
               </div>
             )}
@@ -304,7 +304,7 @@ export function ParticipantDetail({
                           const dayAnomalies = anomaliesRange.filter(a => a.date === date)
                           return (
                             <div key={date} className="flex items-center gap-1 mb-0.5">
-                              <span className="text-xs text-gray-500 w-16 shrink-0">
+                              <span className="text-xs text-gray-500 dark:text-gray-400 w-16 shrink-0">
                                 {formatDate(date)}
                               </span>
                               <div className="flex gap-0.5 flex-1">
@@ -331,7 +331,7 @@ export function ParticipantDetail({
                         })}
                       </div>
                       <div className="flex items-center mt-2 pl-16">
-                        <div className="flex justify-between text-xs text-gray-500 flex-1">
+                        <div className="flex justify-between text-xs text-gray-500 dark:text-gray-400 flex-1">
                           <span>0:00</span>
                           <span>6:00</span>
                           <span>12:00</span>
@@ -339,9 +339,9 @@ export function ParticipantDetail({
                           <span>24:00</span>
                         </div>
                       </div>
-                      <div className="flex items-center justify-center gap-4 mt-2 text-xs text-gray-500">
+                      <div className="flex items-center justify-center gap-4 mt-2 text-xs text-gray-500 dark:text-gray-400">
                         <div className="flex items-center gap-1">
-                          <div className="w-3 h-3 rounded-sm bg-gray-200" />
+                          <div className="w-3 h-3 rounded-sm bg-gray-200 dark:bg-gray-600" />
                           <span>None</span>
                         </div>
                         <div className="flex items-center gap-1">
@@ -362,7 +362,7 @@ export function ParticipantDetail({
                 })()}
               </div>
             ) : (
-              <div className="h-52 flex items-center justify-center text-gray-400">
+              <div className="h-52 flex items-center justify-center text-gray-400 dark:text-gray-500">
                 No anomalies detected
               </div>
             )}
