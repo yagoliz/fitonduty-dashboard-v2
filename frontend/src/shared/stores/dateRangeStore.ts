@@ -9,6 +9,7 @@ interface DateRangeState {
   mode: DateMode
   setDateRange: (start: Date, end: Date) => void
   setMode: (mode: DateMode) => void
+  setEndDate: (endDate: Date) => void
   navigateDay: (direction: 'prev' | 'next') => void
   setDaysBack: (days: number) => void
   formattedStartDate: () => string
@@ -25,7 +26,7 @@ export const useDateRangeStore = create<DateRangeState>((set, get) => ({
   },
 
   setMode: (mode: DateMode) => {
-    const today = new Date()
+    const { endDate } = get()
     let days = 7
     if (mode === 'last_30') days = 30
     if (mode === 'last_90') days = 90
@@ -33,12 +34,23 @@ export const useDateRangeStore = create<DateRangeState>((set, get) => ({
     if (mode !== 'custom') {
       set({
         mode,
-        startDate: subDays(today, days),
-        endDate: today,
+        startDate: subDays(endDate, days),
       })
     } else {
       set({ mode })
     }
+  },
+
+  setEndDate: (endDate: Date) => {
+    const { mode } = get()
+    let days = 7
+    if (mode === 'last_30') days = 30
+    if (mode === 'last_90') days = 90
+
+    set({
+      endDate,
+      startDate: subDays(endDate, days),
+    })
   },
 
   navigateDay: (direction: 'prev' | 'next') => {

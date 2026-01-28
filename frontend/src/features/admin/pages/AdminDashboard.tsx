@@ -19,14 +19,14 @@ import {
   useGroupsComparison,
   useGroupAggregation,
 } from '@/shared/hooks/useApi'
-import { format, subDays, parseISO } from 'date-fns'
+import { format, subDays, parseISO, parse } from 'date-fns'
 
 type TrendMode = 'last_7' | 'last_30' | 'last_90'
 
 export function AdminDashboard() {
   const { user, logout } = useAuthStore()
   const { sidebarOpen, toggleSidebar } = useUIStore()
-  const { mode: globalMode, setMode: setGlobalMode, formattedStartDate, formattedEndDate } = useDateRangeStore()
+  const { mode: globalMode, setMode: setGlobalMode, setEndDate: setGlobalEndDate, formattedStartDate, formattedEndDate } = useDateRangeStore()
 
   const [selectedGroupId, setSelectedGroupId] = useState<number | null>(null)
   const [selectedParticipantId, setSelectedParticipantId] = useState<number | null>(null)
@@ -213,6 +213,23 @@ export function AdminDashboard() {
               </Button>
             </div>
           </div>
+
+          {/* End Date - for group views (no participant selected) */}
+          {!selectedParticipantId && (
+            <div>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                End Date
+              </label>
+              <DatePicker
+                value={formattedEndDate()}
+                onChange={(e) => setGlobalEndDate(parse(e.target.value, 'yyyy-MM-dd', new Date()))}
+                max={format(new Date(), 'yyyy-MM-dd')}
+              />
+              <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                Range: {formattedStartDate()} to {formattedEndDate()}
+              </p>
+            </div>
+          )}
 
           {/* Snapshot Date - only when participant selected */}
           {selectedParticipantId && (

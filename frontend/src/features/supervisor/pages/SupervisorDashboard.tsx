@@ -3,9 +3,10 @@ import { useDateRangeStore } from '@/shared/stores/dateRangeStore'
 import { useQuery } from '@tanstack/react-query'
 import { Button } from '@/shared/components/ui/Button'
 import { Card } from '@/shared/components/ui/Card'
+import { DatePicker } from '@/shared/components/ui/DatePicker'
 import { LineChart } from '@/shared/components/charts/LineChart'
 import { apiClient } from '@/shared/services/apiClient'
-import { format, parseISO } from 'date-fns'
+import { format, parseISO, parse } from 'date-fns'
 
 interface MetricCardProps {
   label: string
@@ -83,7 +84,7 @@ function useSupervisorGroupData(startDate: string, endDate: string) {
 
 export function SupervisorDashboard() {
   const { user, logout } = useAuthStore()
-  const { mode, setMode, formattedStartDate, formattedEndDate } = useDateRangeStore()
+  const { mode, setMode, setEndDate, formattedStartDate, formattedEndDate } = useDateRangeStore()
 
   const { data: groupInfo, isLoading: loadingInfo } = useSupervisorGroupInfo()
   const { data: groupData, isLoading: loadingData } = useSupervisorGroupData(
@@ -190,28 +191,38 @@ export function SupervisorDashboard() {
               {loadingInfo ? '--' : groupInfo?.participant_count || 0} participants
             </p>
           </div>
-          <div className="flex gap-2">
-            <Button
-              variant={mode === 'last_7' ? 'primary' : 'outline'}
-              size="sm"
-              onClick={() => setMode('last_7')}
-            >
-              7 Days
-            </Button>
-            <Button
-              variant={mode === 'last_30' ? 'primary' : 'outline'}
-              size="sm"
-              onClick={() => setMode('last_30')}
-            >
-              30 Days
-            </Button>
-            <Button
-              variant={mode === 'last_90' ? 'primary' : 'outline'}
-              size="sm"
-              onClick={() => setMode('last_90')}
-            >
-              90 Days
-            </Button>
+          <div className="flex items-center gap-4">
+            <div className="flex gap-2">
+              <Button
+                variant={mode === 'last_7' ? 'primary' : 'outline'}
+                size="sm"
+                onClick={() => setMode('last_7')}
+              >
+                7 Days
+              </Button>
+              <Button
+                variant={mode === 'last_30' ? 'primary' : 'outline'}
+                size="sm"
+                onClick={() => setMode('last_30')}
+              >
+                30 Days
+              </Button>
+              <Button
+                variant={mode === 'last_90' ? 'primary' : 'outline'}
+                size="sm"
+                onClick={() => setMode('last_90')}
+              >
+                90 Days
+              </Button>
+            </div>
+            <div className="flex items-center gap-2">
+              <span className="text-sm text-gray-500 dark:text-gray-400">End:</span>
+              <DatePicker
+                value={formattedEndDate()}
+                onChange={(e) => setEndDate(parse(e.target.value, 'yyyy-MM-dd', new Date()))}
+                max={format(new Date(), 'yyyy-MM-dd')}
+              />
+            </div>
           </div>
         </div>
 
