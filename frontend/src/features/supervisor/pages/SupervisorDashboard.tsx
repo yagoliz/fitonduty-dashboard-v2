@@ -182,7 +182,7 @@ export function SupervisorDashboard() {
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Header with date controls */}
-        <div className="flex items-center justify-between mb-6">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
           <div>
             <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
               {loadingInfo ? 'Loading...' : groupInfo?.group_name || 'Group Overview'}
@@ -191,7 +191,7 @@ export function SupervisorDashboard() {
               {loadingInfo ? '--' : groupInfo?.participant_count || 0} participants
             </p>
           </div>
-          <div className="flex items-center gap-4">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3">
             <div className="flex gap-2">
               <Button
                 variant={mode === 'last_7' ? 'primary' : 'outline'}
@@ -247,8 +247,7 @@ export function SupervisorDashboard() {
 
         {/* Section 2: Physiological Group Averages */}
         <h4 className="text-md font-medium text-gray-700 dark:text-gray-300 mt-6">Physiological Group Averages (Latest)</h4>
-        {/* Row 1: HR, Max HR, HRV */}
-        <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mt-2">
+        <div className="grid grid-cols-1 sm:grid-cols-3 md:grid-cols-5 gap-4 mt-2">
           <MetricCard
             label="Avg Resting HR"
             value={latestData?.avg_resting_hr?.toFixed(0)}
@@ -270,9 +269,6 @@ export function SupervisorDashboard() {
             color="text-purple-500"
             loading={isLoading}
           />
-        </div>
-        {/* Row 2: Steps, Sleep */}
-        <div className="grid grid-cols-2 gap-4 mt-4">
           <MetricCard
             label="Avg Steps"
             value={latestData?.avg_step_count?.toLocaleString(undefined, { maximumFractionDigits: 0 })}
