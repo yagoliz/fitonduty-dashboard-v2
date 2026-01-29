@@ -55,4 +55,5 @@ def get_group_participants(
         raise NotFoundError("Group")
 
     participants = [u for u in group.users if u.role == "participant"]
+    participants.sort(key=lambda u: u.username)
     return [UserResponse.model_validate(p) for p in participants]
