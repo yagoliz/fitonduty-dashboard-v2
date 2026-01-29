@@ -59,26 +59,27 @@ interface GroupInfo {
   participant_count: number
 }
 
-function useSupervisorGroupInfo() {
+function useSupervisorGroupInfo(userId: number | undefined) {
   return useQuery({
-    queryKey: ['supervisor', 'group-info'],
+    queryKey: ['supervisor', userId, 'group-info'],
     queryFn: async () => {
       const { data } = await apiClient.get<GroupInfo>('/api/v1/supervisor/group-info')
       return data
     },
+    enabled: !!userId,
   })
 }
 
-function useSupervisorGroupData(startDate: string, endDate: string) {
+function useSupervisorGroupData(userId: number | undefined, startDate: string, endDate: string) {
   return useQuery({
-    queryKey: ['supervisor', 'group-data', startDate, endDate],
+    queryKey: ['supervisor', userId, 'group-data', startDate, endDate],
     queryFn: async () => {
       const { data } = await apiClient.get<SupervisorGroupData[]>('/api/v1/supervisor/group-data', {
         params: { start_date: startDate, end_date: endDate },
       })
       return data
     },
-    enabled: !!startDate && !!endDate,
+    enabled: !!userId && !!startDate && !!endDate,
   })
 }
 
@@ -86,8 +87,9 @@ export function SupervisorDashboard() {
   const { user, logout } = useAuthStore()
   const { mode, setMode, setEndDate, formattedStartDate, formattedEndDate } = useDateRangeStore()
 
-  const { data: groupInfo, isLoading: loadingInfo } = useSupervisorGroupInfo()
+  const { data: groupInfo, isLoading: loadingInfo } = useSupervisorGroupInfo(user?.id)
   const { data: groupData, isLoading: loadingData } = useSupervisorGroupData(
+    user?.id,
     formattedStartDate(),
     formattedEndDate()
   )

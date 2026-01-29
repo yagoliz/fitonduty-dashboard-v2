@@ -2,6 +2,7 @@ import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
 import type { User, Token, LoginRequest } from '../types/api'
 import { apiClient } from '../services/apiClient'
+import { queryClient } from '../services/queryClient'
 
 interface AuthState {
   user: User | null
@@ -56,6 +57,8 @@ export const useAuthStore = create<AuthState>()(
           isAuthenticated: false,
           error: null,
         })
+        // Clear React Query cache to prevent stale data on re-login
+        queryClient.clear()
       },
 
       refreshAccessToken: async () => {
