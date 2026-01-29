@@ -69,7 +69,8 @@ export function GroupAggregationView({
   const reportingData = data?.daily_data.map((d) => ({
     date: formatDate(d.date),
     value: data.total_participants > 0
-      ? Math.round((d.participants_reporting / data.total_participants) * 100)
+      // ? Math.round((d.participants_reporting / data.total_participants) * 100)
+      ? Math.round(d.participants_reporting)
       : 0,
   })) || []
 
@@ -77,7 +78,8 @@ export function GroupAggregationView({
   const questionnaireData = data?.daily_data.map((d) => ({
     date: formatDate(d.date),
     value: data.total_participants > 0
-      ? Math.round((d.questionnaire_count / data.total_participants) * 100)
+      // ? Math.round((d.questionnaire_count / data.total_participants) * 100)
+      ? Math.round(d.questionnaire_count)
       : 0,
   })) || []
 
@@ -131,10 +133,10 @@ export function GroupAggregationView({
       {/* Section 1: Completion Rates */}
       <h4 className="text-md font-medium text-gray-700 dark:text-gray-300">Completion Rates</h4>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <Card title="Physio Reporting Rate (%)">
+        <Card title="Physio Reporting - Total Participants">
           <LineChart data={reportingData} color="#6366f1" height="220px" />
         </Card>
-        <Card title="Questionnaire Completion (%)">
+        <Card title="Questionnaire Completion - Total Participants">
           <LineChart data={questionnaireData} color="#f59e0b" height="220px" />
         </Card>
       </div>

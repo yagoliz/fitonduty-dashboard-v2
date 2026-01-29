@@ -130,7 +130,8 @@ export function SupervisorDashboard() {
   const reportingData = groupData?.map((d) => ({
     date: formatDate(d.date),
     value: groupInfo?.participant_count && groupInfo.participant_count > 0
-      ? Math.round((d.physio_data_count / groupInfo.participant_count) * 100)
+      // ? Math.round((d.physio_data_count / groupInfo.participant_count) * 100)
+      ? Math.round(d.physio_data_count)
       : 0,
   })) || []
 
@@ -138,7 +139,8 @@ export function SupervisorDashboard() {
   const questionnaireCompletionData = groupData?.map((d) => ({
     date: formatDate(d.date),
     value: groupInfo?.participant_count && groupInfo.participant_count > 0
-      ? Math.round((d.questionnaire_data_count / groupInfo.participant_count) * 100)
+      // ? Math.round((d.questionnaire_data_count / groupInfo.participant_count) * 100)
+      ? Math.round(d.questionnaire_data_count)
       : 0,
   })) || []
 
@@ -231,14 +233,14 @@ export function SupervisorDashboard() {
         {/* Section 1: Completion Rates */}
         <h4 className="text-md font-medium text-gray-700 dark:text-gray-300">Completion Rates</h4>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-2">
-          <Card title="Physio Reporting Rate (%)">
+          <Card title="Physio Reporting - Total Participants">
             {isLoading ? (
               <div className="h-56 animate-pulse bg-gray-100 dark:bg-gray-700 rounded" />
             ) : (
               <LineChart data={reportingData} color="#6366f1" height="220px" />
             )}
           </Card>
-          <Card title="Questionnaire Completion (%)">
+          <Card title="Questionnaire Completion - Total Participants">
             {isLoading ? (
               <div className="h-56 animate-pulse bg-gray-100 dark:bg-gray-700 rounded" />
             ) : (
