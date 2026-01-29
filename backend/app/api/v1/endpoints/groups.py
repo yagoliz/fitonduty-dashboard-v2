@@ -11,7 +11,12 @@ router = APIRouter(prefix="/groups", tags=["groups"])
 @router.get("", response_model=list[GroupResponse])
 def get_all_groups(db: DbSession, current_user: AdminUser) -> list[GroupResponse]:
     """Get all groups (admin only)."""
-    groups = db.query(Group).order_by(Group.group_name).all()
+    groups = (
+        db.query(Group)
+        .filter(Group.group_name != "Unassigned")
+        .order_by(Group.group_name)
+        .all()
+    )
     return [GroupResponse.model_validate(g) for g in groups]
 
 
